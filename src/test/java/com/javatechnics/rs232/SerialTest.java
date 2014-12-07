@@ -28,6 +28,9 @@ import static org.junit.Assert.*;
  */
 public class SerialTest {
     
+    private Serial serial = null;
+    private final String NATIVE_LIB_VERSION = "1.0.0";
+    
     public SerialTest() {
     }
     
@@ -41,23 +44,32 @@ public class SerialTest {
     
     @Before
     public void setUp() {
+        // Test 1.1 - Test for java.lang.UnsatifiedLinkError when Serial object
+        // is created
+        try {
+           serial = new Serial();
+            assert(true);
+            System.out.println("libj232.so loaded");
+        } catch (UnsatisfiedLinkError exception){
+            fail("Runtime Exception: " + exception);
+        }
     }
     
     @After
     public void tearDown() {
     }
 
-    @org.junit.Test
-    public void testSomeMethod() {
-        Serial serial;
-        // Test 1.1 - Test for java.lang.UnsatifiedLinkError when Serial object
-        // is created.
-        try {
-           serial = new Serial();
-            assert(true);
-        } catch (UnsatisfiedLinkError exception){
-            fail("Runtime Exception: " + exception);
-        }
+    
+    @Test
+    public void testNativeVersion(){
+        // Test for the correct native version
+        System.out.print("Testing for Native library version " +
+                            NATIVE_LIB_VERSION + " ...");
+        assertEquals("Native library version is not " + NATIVE_LIB_VERSION,
+                            NATIVE_LIB_VERSION,
+                            serial.getNativeLibraryVersion());
+        System.out.print("passed.\n");
+        
     }
     
 }

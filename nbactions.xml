@@ -39,4 +39,16 @@
             <activatedProfile>run-on-felix</activatedProfile>
         </activatedProfiles>
     </action>
+    <action>
+            <actionName>build</actionName>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>install</goal>
+            </goals>
+            <properties>
+                <java.library.path>/usr/lib</java.library.path>
+            </properties>
+        </action>
 </actions>

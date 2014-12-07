@@ -23,9 +23,12 @@ import java.io.InputStream;
  * @author kerry
  */
 public class Serial extends InputStream{
+    
+    public native String getNativeLibraryVersion();
+    
     static {
         //Load Native Library here.
-        System.loadLibrary("libj232");
+        System.loadLibrary("j232");    
     }
     @Override
     public boolean markSupported() {
