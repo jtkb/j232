@@ -15,6 +15,9 @@
  */
 package com.javatechnics.rs232;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -70,6 +73,16 @@ public class SerialTest {
                             serial.getNativeLibraryVersion());
         System.out.print("passed.\n");
         
+    }
+    
+    @Test
+    public void testSerialOpen(){
+        System.out.println("Testing open() method");
+        try {
+            serial.open();
+        } catch (IOException ex) {
+            fail("IOException: " + ex);
+        }
     }
     
 }

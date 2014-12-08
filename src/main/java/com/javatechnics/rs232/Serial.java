@@ -15,14 +15,20 @@
  */
 package com.javatechnics.rs232;
 
+import com.javatechnics.rs232.stream.SerialPortInputStream;
+import com.javatechnics.rs232.stream.SerialPortOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  *
  * @author kerry
  */
-public class Serial extends InputStream{
+public class Serial implements Closeable, Openable {
+    private SerialPortInputStream serialPortInputStream = null;
+    private SerialPortOutputStream serialPortOutputStream = null;
     
     public native String getNativeLibraryVersion();
     
@@ -30,47 +36,30 @@ public class Serial extends InputStream{
         //Load Native Library here.
         System.loadLibrary("j232");    
     }
-    @Override
-    public boolean markSupported() {
-        return super.markSupported(); //To change body of generated methods, choose Tools | Templates.
+
+    /**
+     * Returns the underlying OutputStream.
+     * @return the OutputStream
+     * @throws IOException if an I/O error occurs including if outputstream
+     * is NULL or closed.
+     */
+    public OutputStream getOutputStream() throws IOException {
+        if (serialPortOutputStream == null) throw new IOException();
+        if (serialPortOutputStream.isClosed()) throw new IOException();
+        return serialPortOutputStream;
+    }
+ 
+    public InputStream getInputStream() throws IOException{
+        if (serialPortInputStream == null) throw new IOException();
+        if (serialPortInputStream.isClosed()) throw new IOException();
+        return serialPortInputStream;
     }
 
-    @Override
-    public synchronized void reset() throws IOException {
-        super.reset(); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public synchronized void mark(int readlimit) {
-        super.mark(readlimit); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void close() throws IOException {
-        super.close(); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public long skip(long n) throws IOException {
-        return super.skip(n); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int read(byte[] b, int off, int len) throws IOException {
-        return super.read(b, off, len); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int read(byte[] b) throws IOException {
-        return super.read(b); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int available(){
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    @Override
-    public int read() throws IOException {
+    public void open() throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
