@@ -78,8 +78,8 @@ public class SerialTest {
     @Test
     public void testSerialOpen(){
         System.out.println("Testing open() method");
-        try {
-            serial.open();
+        try {            
+            assertTrue("Opening file", serial.open("/home/kerry/serialport", OpenFlags.O_RDWR.value));
         } catch (IOException ex) {
             fail("IOException: " + ex);
         }

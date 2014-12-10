@@ -24,9 +24,13 @@ import java.io.IOException;
  * @author Kerry Billingham <java@avionicengineers.com>
  */
 public interface Openable {
+    
     /**
-     * Open an RS232/COM port resource
-     * @throws IOException if an I/O error occurs including 
+     * Open an RS232/COM port resource.
+     * @param path String representing the path in the file structure to the port.
+     * @param flags the flags used to open the COM port.
+     * @return TRUE if successful.
+     * @throws IOException if an I/O error occurs.
      */
-    public void open() throws IOException;
+    public boolean open(String path, int flags) throws IOException;
 }

@@ -21,18 +21,72 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
- * @author kerry
+ * @author Kerry Billingham <java@avionicengineers.com>.
  */
 public class Serial implements Closeable, Openable {
-    private SerialPortInputStream serialPortInputStream = null;
-    private SerialPortOutputStream serialPortOutputStream = null;
+    /**
+     * This holds the native file descriptor returned from openSerialPort().
+     */
+    private int fileDescriptor = -1;
     
+    /**
+     * This field holds a flag to indicate if the hardware serial port is open.
+     */
+    private boolean portOpen = false;
+    
+    /**
+     * The InputStream object for the serial port.
+     */
+    private SerialPortInputStream serialPortInputStream = null;
+    /**
+     * The OutputStream object for the serial port.
+     */
+    private SerialPortOutputStream serialPortOutputStream = null;
+    /**
+     * Returns the version number of the underlying native library.
+     * @return the version number of the library.
+     */
     public native String getNativeLibraryVersion();
     
+    /**
+     * Call through to the native library to open the specified device with
+     * the specified flags.
+     * 
+     * @param deviceFile String describing the serial port to open e.g. "/dev/ttyS0"
+     * for COM1.
+     * @param flags representing the access mode for the file. See fcntl.h for
+     * details.
+     * @return the underlying native file-descriptor if successful or -1 if failed.
+     * @throws IOException IOException is thrown if the underlying native call
+     * to open fails.
+     */
+    private native int openSerialPort(String deviceFile, int flags) throws IOException;
+    
+    /**
+     * Call through to the native library to close the specified device file.
+     * @param deviceFile integer value representing the native file descriptor.
+     * @return 0 upon success -1 on error
+     * @throws IOException
+     */
+    private native int closeSerialPort(int deviceFile) throws IOException;
+    
+    /**
+     * Static code here in particular this is where the 
+     */
     static {
+        /*
+        * The following must NOT be removed. This and its accompanying native library
+        * are intended for NON-Windows platforms. If the following check is removed
+        * then you are responsible for any consequences that occur as a result.
+        */
+        if(System.getProperty("os.name").toLowerCase().contains("windows"))
+            throw new RuntimeException("This library does not run on Windows.");
+        
         //Load Native Library here.
         System.loadLibrary("j232");    
     }
@@ -59,8 +113,29 @@ public class Serial implements Closeable, Openable {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void open() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
+    public boolean open(String path, int flags) throws IOException {
+        if ((fileDescriptor = openSerialPort(path, flags)) > -1){
+            portOpen = true;
+        }
+        return portOpen;
     }
     
+    /**
+     * Returns a boolean indicating whether the underlying hardware serial
+     * port has been opened or not.
+     * @return TRUE if the port is open, FALSE otherwise.
+     */
+    public boolean isOpen(){
+        return portOpen;
+    }
+    
+    @Override
+    protected void finalize(){
+        try {
+            closeSerialPort(fileDescriptor);
+        } catch (IOException ex) {
+            Logger.getLogger(Serial.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
