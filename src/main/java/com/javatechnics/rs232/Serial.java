@@ -109,8 +109,15 @@ public class Serial implements Closeable, Openable {
         return serialPortInputStream;
     }
 
+    /**
+     * Implementation of the Closeable interface. Call this method when the
+     * serial port is to be closed.
+     * @throws IOException if an IOException occurs during call.
+     */
     public void close() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int return_value = closeSerialPort(fileDescriptor);
+        if (return_value == -1) throw new IOException("");
+        fileDescriptor = -1;    // Restore FD to -1
     }
 
     
@@ -132,6 +139,7 @@ public class Serial implements Closeable, Openable {
     
     @Override
     protected void finalize(){
+        System.out.println("Finalize() method called.");
         try {
             closeSerialPort(fileDescriptor);
         } catch (IOException ex) {

@@ -31,22 +31,17 @@ import static org.junit.Assert.*;
  */
 public class SerialTest {
     
-    private Serial serial = null;
-    private final String NATIVE_LIB_VERSION = "1.0.0";
+    private static Serial serial = null;
+    private static final String NATIVE_LIB_VERSION = "1.0.0";
+    private static final String SERIAL_PORT_PREFIX = "ttyS";
+    private static final String USB_SERIAL_PORT_PREFIX = "ttyUSB";
+    
     
     public SerialTest() {
     }
     
     @BeforeClass
     public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
         // Test 1.1 - Test for java.lang.UnsatifiedLinkError when Serial object
         // is created
         try {
@@ -58,8 +53,25 @@ public class SerialTest {
         }
     }
     
+    @AfterClass
+    public static void tearDownClass() {
+        try {
+            serial.close();
+            
+            System.out.println("Serial port closed.");
+        } catch (IOException ex) {
+            fail("Failed to close serial port: " + ex);
+        }
+    }
+    
+    @Before
+    public void setUp() {
+        
+    }
+    
     @After
     public void tearDown() {
+        
     }
 
     
@@ -79,7 +91,9 @@ public class SerialTest {
     public void testSerialOpen(){
         System.out.println("Testing open() method");
         try {            
-            assertTrue("Opening file", serial.open("/home/kerry/serialport", OpenFlags.O_RDWR.value));
+            assertTrue("Opening file", serial.open("/dev/" + SERIAL_PORT_PREFIX
+                                            + "0",
+                                            OpenFlags.O_RDWR.value));
         } catch (IOException ex) {
             fail("IOException: " + ex);
         }
