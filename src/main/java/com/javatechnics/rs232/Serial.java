@@ -76,6 +76,24 @@ public class Serial implements Closeable, Openable {
     private native int closeSerialPort(int deviceFile) throws IOException;
     
     /**
+     * Call through to the native library to set the terminal (serial port)
+     * settings.
+     * @param fileDescriptor the file descriptor of the serial port.
+     * @param terminalControlAction integer value indicating how the 
+     * settings should be applied. Use the values found in 
+     * {@link com.javatechnics.rs232.TerminalControlActions}.
+     * @param termios A {@link com.javatechnics.rs232.TermIOS} class which
+     * holds flags to be applied to the serial port.
+     * @return 0 upon success, -1 upon fail to apply settings AND failure
+     * to throw an exception if an error occurred in the native code.
+     * @throws IOException throws IOException if an error occurred.
+     */
+    private native int setNativeTerminalAttributes(int fileDescriptor,
+                                                    int terminalControlAction,
+                                                    TermIOS termios) throws 
+                                                        IOException;
+    
+    /**
      * Static code here in particular this is where the 
      */
     static {
@@ -120,7 +138,15 @@ public class Serial implements Closeable, Openable {
         fileDescriptor = -1;    // Restore FD to -1
     }
 
-    
+    /**
+     * Opens the underlying hardware serial port.
+     * @param path the file-system path to the device e.g. /dev/ttyS0.
+     * @param flags flags used to open the device with. See 
+     * {@link com.javatechnics.rs232.OpenFlags}.
+     * @return true if the port was successfully opened false if an error
+     * occured AND the native code could not throw an IOException.
+     * @throws IOException
+     */
     public boolean open(String path, int flags) throws IOException {
         if ((fileDescriptor = openSerialPort(path, flags)) > -1){
             portOpen = true;
@@ -135,6 +161,24 @@ public class Serial implements Closeable, Openable {
      */
     public boolean isOpen(){
         return portOpen;
+    }
+    
+    /**
+     * Call this method to set control attributes on the underlying serial
+     * port.
+     * @param terminalControlAction integer flag. 
+     * See {@link com.javatechnics.rs232.TerminalControlActions}
+     * @param termios a {@link com.javatechnics.rs232.TermIOS} class that
+     * describes the desired control modes.
+     * @return 0 upon success, -1 if an error occurred in the native code
+     * @throws IOException 
+     */
+    public int setTerminalAttributes(int terminalControlAction, TermIOS termios)
+            throws IOException {
+        if (termios == null) throw new IOException("");
+        return setNativeTerminalAttributes(fileDescriptor, 
+                terminalControlAction, 
+                termios);
     }
     
     @Override

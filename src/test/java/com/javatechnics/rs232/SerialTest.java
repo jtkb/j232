@@ -99,4 +99,40 @@ public class SerialTest {
         }
     }
     
+    @Test
+    public void testSetTerminalControlStructure(){
+        System.out.println("Testing the setting of termios stucture");
+        TermIOS termios = new TermIOS();
+        termios.c_cflag = ControlFlags.B2400.value | ControlFlags.CS8.value |
+                          ControlFlags.CLOCAL.value | ControlFlags.CREAD.value;
+        termios.c_iflag = InputFlags.ICRNL.value;
+        termios.c_oflag = 0;
+        termios.c_lflag = ~LocalFlags.ICANON.value;
+        
+        termios.c_cc[ControlCharacters.VINTR.value] = 0;
+        termios.c_cc[ControlCharacters.VQUIT.value] = 0;
+        termios.c_cc[ControlCharacters.VERASE.value] = 0;
+        termios.c_cc[ControlCharacters.VKILL.value] = 0;
+        termios.c_cc[ControlCharacters.VEOF.value] = 0;
+        termios.c_cc[ControlCharacters.VTIME.value] = 1;
+        termios.c_cc[ControlCharacters.VMIN.value] = 14;
+        termios.c_cc[ControlCharacters.VSWTC.value] = 0;
+        termios.c_cc[ControlCharacters.VSTART.value] = 17;
+        termios.c_cc[ControlCharacters.VSTOP.value] = 19;
+        termios.c_cc[ControlCharacters.VSUSP.value] = 0;
+        termios.c_cc[ControlCharacters.VEOL.value] = 0;
+        termios.c_cc[ControlCharacters.VREPRINT.value] = 0;
+        termios.c_cc[ControlCharacters.VDISCARD.value] = 0;
+        termios.c_cc[ControlCharacters.VWERASE.value] = 0;
+        termios.c_cc[ControlCharacters.VLNEXT.value] = 0;
+        termios.c_cc[ControlCharacters.VEOL2.value] = 0;
+        
+        try {
+            serial.setTerminalAttributes(TerminalControlActions.TCSANOW.value, termios);
+            System.out.println("Terminal Control attributes set.");
+        } catch (IOException ex) {
+            fail(ex.toString());
+        }
+    }
+    
 }
