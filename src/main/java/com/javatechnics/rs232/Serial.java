@@ -93,6 +93,8 @@ public class Serial implements Closeable, Openable {
                                                     TermIOS termios) throws 
                                                         IOException;
     
+    private native TermIOS getNativeTerminalAttributes(int fileDescriptor)
+                                                    throws IOException;
     /**
      * Static code here in particular this is where the 
      */
@@ -179,6 +181,17 @@ public class Serial implements Closeable, Openable {
         return setNativeTerminalAttributes(fileDescriptor, 
                 terminalControlAction, 
                 termios);
+    }
+    
+    /**
+     * Call this method to retrieve the control attributes set on the underlying
+     * serial port.
+     * @return a TermIOS object representing the termios struct for the serial port.
+     * @throws IOException 
+     */
+    public TermIOS getTerminalAttributes()
+            throws IOException{
+        return getNativeTerminalAttributes(fileDescriptor);
     }
     
     @Override

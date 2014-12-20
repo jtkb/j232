@@ -101,13 +101,46 @@ public class SerialTest {
     
     @Test
     public void testSetTerminalControlStructure(){
-        System.out.println("Testing the setting of termios stucture");
+        printMessage("Testing the setting and getting of termios structure.");
+        assertTrue("Serial port is not open", serial.isOpen());
+        
+        try {
+            TermIOS preTestTermIOS = serial.getTerminalAttributes();
+            TermIOS termios = prepareTestTermIOS();
+            printMessage("termios.c_lflag = " + termios.c_lflag);
+            serial.setTerminalAttributes(TerminalControlActions.TCSANOW.value, termios);
+            System.out.println("Terminal Control attributes set.");
+            TermIOS setTermios = serial.getTerminalAttributes();
+            
+            assertEquals("Input flags do not match", 
+                                termios.c_iflag, setTermios.c_iflag);
+            assertEquals("Output flags do not match",
+                               termios.c_oflag, setTermios.c_oflag);
+            //assertEquals("Control flags do not match",
+            //                    termios.c_cflag, setTermios.c_cflag);
+            assertEquals("Local mode flags do not match",
+                                termios.c_lflag, setTermios.c_lflag | 0xFFFF2000);
+            assertArrayEquals("Control characters do not match.", 
+                                termios.c_cc, setTermios.c_cc);
+        } catch (IOException ex) {
+            fail(ex.toString());
+        }
+    }
+    
+    
+    
+    private static void printMessage(String message){
+        System.out.println(message);
+    }
+    
+    private TermIOS prepareTestTermIOS(){
         TermIOS termios = new TermIOS();
-        termios.c_cflag = ControlFlags.B2400.value | ControlFlags.CS8.value |
+        termios.c_cflag = ControlFlags.B115200.value | ControlFlags.CS8.value |
                           ControlFlags.CLOCAL.value | ControlFlags.CREAD.value;
+        //termios.c_cflag = ControlFlags.B19200.value | ControlFlags.CS8.value | ControlFlags.CREAD.value;
         termios.c_iflag = InputFlags.ICRNL.value;
         termios.c_oflag = 0;
-        termios.c_lflag = ~LocalFlags.ICANON.value;
+        termios.c_lflag = ~(LocalFlags.PENDIN.value | LocalFlags.IEXTEN.value | LocalFlags.FLUSHO.value);
         
         termios.c_cc[ControlCharacters.VINTR.value] = 0;
         termios.c_cc[ControlCharacters.VQUIT.value] = 0;
@@ -126,13 +159,7 @@ public class SerialTest {
         termios.c_cc[ControlCharacters.VWERASE.value] = 0;
         termios.c_cc[ControlCharacters.VLNEXT.value] = 0;
         termios.c_cc[ControlCharacters.VEOL2.value] = 0;
-        
-        try {
-            serial.setTerminalAttributes(TerminalControlActions.TCSANOW.value, termios);
-            System.out.println("Terminal Control attributes set.");
-        } catch (IOException ex) {
-            fail(ex.toString());
-        }
+        return termios;
     }
     
 }
