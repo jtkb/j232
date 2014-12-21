@@ -16,7 +16,6 @@
 package com.javatechnics.rs232;
 
 import com.javatechnics.rs232.flags.IOCTRLRequests;
-import com.javatechnics.rs232.flags.Openable;
 import com.javatechnics.rs232.flags.QueueSelector;
 import com.javatechnics.rs232.stream.SerialPortInputStream;
 import com.javatechnics.rs232.stream.SerialPortOutputStream;

@@ -15,6 +15,13 @@
  */
 package com.javatechnics.rs232;
 
+import com.javatechnics.rs232.flags.TerminalControlActions;
+import com.javatechnics.rs232.flags.OpenFlags;
+import com.javatechnics.rs232.flags.InputFlags;
+import com.javatechnics.rs232.flags.ModemControlFlags;
+import com.javatechnics.rs232.flags.LocalFlags;
+import com.javatechnics.rs232.flags.ControlFlags;
+import com.javatechnics.rs232.flags.QueueSelector;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -127,8 +134,37 @@ public class SerialTest {
         }
     }
     
+    @Test
+    public void testModemControlBits(){
+        printMessage("Testing the setting and getting of the Modem control bits.");
+        int preTestModemControlBits = 0;
+        int modemControlBitsToSet = 0;
+        try {
+            preTestModemControlBits = serial.getModemControlBits();
+            modemControlBitsToSet = preTestModemControlBits & ~ModemControlFlags.TIOCM_RTS.value;
+            modemControlBitsToSet &= ~ModemControlFlags.TIOCM_DTR.value;
+            printMessage("Pre-test modem control bits :" + preTestModemControlBits);
+            serial.setModemControlbits(modemControlBitsToSet);
+            assertEquals("Unable to set modem control bits.", modemControlBitsToSet, serial.getModemControlBits() & 0x01FF);
+            printMessage("Post-test modem control bits: " + serial.getModemControlBits());
+        } catch (IOException ex) {
+            fail("Testing Modem control bits failed: " + ex);
+        }
+    }
     
-    
+    @Test
+    public void testFlushcontrol(){
+        printMessage("Testing the input output queue flush control.");
+        assertTrue(serial.isOpen());
+        
+        try {
+            assertEquals("Failed to flush input queue", 0, serial.flushQueue(QueueSelector.TCIFLUSH));
+            assertEquals("Failed to flush output queue", 0, serial.flushQueue(QueueSelector.TCOFLUSH));
+            assertEquals("Failed to flush input and output queues", 0, serial.flushQueue(QueueSelector.TCIOFLUSH));
+        } catch (IOException ex) {
+            fail("Failed to flush input and/or output queue." + ex);
+        }
+    }
     private static void printMessage(String message){
         System.out.println(message);
     }

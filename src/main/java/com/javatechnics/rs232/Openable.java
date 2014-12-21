@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.javatechnics.rs232.flags;
+package com.javatechnics.rs232;
 
 import java.io.IOException;
 
