@@ -95,6 +95,25 @@ public class Serial implements Closeable, Openable {
     
     private native TermIOS getNativeTerminalAttributes(int fileDescriptor)
                                                     throws IOException;
+    
+    /**
+     * Call through to native ioctl() function to get the Modem control/serial
+     * port settings.
+     * @param fileDescriptor the file descriptor of the serial port.
+     * @param requestFlags integer value indicating the requested settings. This
+     * value should be OR'd {@link com.javatechnics.rs232.IOCTRLRequests}
+     * values. They will be transformed to the native values in this function.
+     * @return the current modem control bits or -1 if an error and no exception
+     * was thrown.
+     * @throws IOException  if an error occurs.
+     */
+    private native int getNativeModemControlBits(int fileDescriptor,
+                                                    int requestFlags)
+                                                    throws IOException;
+    
+    private native int setNativeModemcontrolBits(int fileDescriptor,
+                                                    int setFlags)
+                                                    throws IOException;
     /**
      * Static code here in particular this is where the 
      */
@@ -163,6 +182,35 @@ public class Serial implements Closeable, Openable {
      */
     public boolean isOpen(){
         return portOpen;
+    }
+    
+    /**
+     * Call this method to get the underlying serial port control bits. This
+     * uses a non-POSIX compliant call to ioctl() so get/setTerminalAttributes()
+     * should be used if POSIX compliance is required. However ioctl allows the
+     * getting of Modem control lines as required (DSR, RTS etc.)
+     * @return the current control bits or -1 if error and IOException was not
+     * thrown.
+     * @throws IOException 
+     */
+    public int getModemControlBits() throws IOException{
+        return getNativeModemControlBits(fileDescriptor, 
+                                        IOCTRLRequests.TIOCMGET.value);
+    }
+    
+    //TODO: Instead of using an int of flags, use an array of the enums. This
+    // way it ensured the correct values are used. Currently is is possible
+    // to set incorrect values so this may have unexpected results.
+    /**
+     * Call this method to set the control bits on the underlying serial port.
+     * This is a non-POSIX compliant call through to ioctl().
+     * @param controlBits flags indicating the desired bits to be set. Use
+     * {@link com.javatechnics.rs232.IOCTRLRequests} Enum to OR values.
+     * @return 0 upon success, -1 if an error and an exception not thrown.
+     * @throws IOException thrown if an error occurs.
+     */
+    public int setModemControlbits(int controlBits) throws IOException{
+        return setNativeModemcontrolBits(fileDescriptor, controlBits);
     }
     
     /**
