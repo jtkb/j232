@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.javatechnics.rs232;
+package com.javatechnics.rs232.flags;
 
 /** This class represents the underlying Unix open() function flags. They make
  * no attempt to match in value to those found in fcntl.h as these could, in

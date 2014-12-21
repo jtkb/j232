@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.javatechnics.rs232;
+package com.javatechnics.rs232.flags;
 
 /**
  * This enum represents the underlying Unix local flags used in the termios

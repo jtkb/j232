@@ -13,33 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.javatechnics.rs232;
+package com.javatechnics.rs232.flags;
 
 /**
- * This enumeration reflects the native control parameters passed to tcsetattr().
- * Refer to termios.h.
+ * This enum represents the underlying Linux tcflush() queue_selector flags. 
+ * The values found here make no attempt to match those found in native header 
+ * files in case these change. Instead the native JNI function transforms these 
+ * values (which are known and under our control) to those found in the native 
+ * header files.
  * @author Kerry Billingham <java@avionicengineers.com>
  */
-public enum TerminalControlActions {
+public enum QueueSelector {
     /**
-     * The change occurs immediately.
+     * Flushes the data received but nor read.
      */
-    TCSANOW     (00000001),
+    TCIFLUSH	(0),
     /**
-     * The change occurs after all output to the file descriptor has been 
+     * Flushes the data written but not transmitted.
+     */
+    TCOFLUSH	(1),
+    /**
+     * Flushes both the data received but not read and data written but not
      * transmitted.
      */
-    TCSADRAIN   (00000002),
-    /**
-     * The change occurs after all output to the file descriptor has been
-     * transmitted and all input that has been received but not read will be
-     * discarded before the change is made.
-     */
-    TCSAFLUSH   (00000004);
+    TCIOFLUSH	(2);
     
     public final int value;
     
-    TerminalControlActions(int value){
+    private QueueSelector (int value){
         this.value = value;
     }
+
 }

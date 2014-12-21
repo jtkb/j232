@@ -15,6 +15,9 @@
  */
 package com.javatechnics.rs232;
 
+import com.javatechnics.rs232.flags.IOCTRLRequests;
+import com.javatechnics.rs232.flags.Openable;
+import com.javatechnics.rs232.flags.QueueSelector;
 import com.javatechnics.rs232.stream.SerialPortInputStream;
 import com.javatechnics.rs232.stream.SerialPortOutputStream;
 import java.io.Closeable;
@@ -110,10 +113,29 @@ public class Serial implements Closeable, Openable {
     private native int getNativeModemControlBits(int fileDescriptor,
                                                     int requestFlags)
                                                     throws IOException;
-    
+    /**
+     * Call through to native ioctl() to set the Modem control bits.
+     * @param fileDescriptor file descriptor of the serial port.
+     * @param setFlags the modem control bits to set
+     * @return 0 upon success -1 if an error and IOException not thrown.
+     * @throws IOException if an error occurs.
+     */
     private native int setNativeModemcontrolBits(int fileDescriptor,
                                                     int setFlags)
                                                     throws IOException;
+    
+    /**
+     * Call through to the native tcflush() function to flush the input and/or
+     * output queues. See man tcflush for more information.
+     * @param fileDescriptor file descriptor of the serial port.
+     * @param queueSelector The input and/or output queue as determined by
+     * the flags defined in termios.h
+     * @return 0 upon success -1 if an error occured and IOException not thrown.
+     * @throws IOException if an error occured.
+     */
+    private native int nativeTCFlush(int fileDescriptor, int queueSelector)
+                                                    throws IOException;
+    
     /**
      * Static code here in particular this is where the 
      */
@@ -240,6 +262,10 @@ public class Serial implements Closeable, Openable {
     public TermIOS getTerminalAttributes()
             throws IOException{
         return getNativeTerminalAttributes(fileDescriptor);
+    }
+    
+    public int flushQueue(QueueSelector queueSelector) throws IOException{
+        return nativeTCFlush(fileDescriptor, queueSelector.value);
     }
     
     @Override

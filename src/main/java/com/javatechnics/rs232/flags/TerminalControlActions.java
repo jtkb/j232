@@ -13,48 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.javatechnics.rs232;
+package com.javatechnics.rs232.flags;
 
 /**
- *
+ * This enumeration reflects the native control parameters passed to tcsetattr().
+ * Refer to termios.h.
  * @author Kerry Billingham <java@avionicengineers.com>
  */
-public enum OutputFlags {
-OPOST	(0000001),
-OLCUC	(0000002),
-ONLCR	(0000004),
-OCRNL	(0000010),
-ONOCR	(0000020),
-ONLRET	(0000040),
-OFILL	(0000100),
-OFDEL	(0000200),
-NLDLY	(0000400),
-NL0	(0000000),
-NL1	(0000400),
-CRDLY	(0003000),
-CR0	(0000000),
-CR1	(0001000),
-CR2	(0002000),
-CR3	(0003000),
-TABDLY	(0014000),
-TAB0	(0000000),
-TAB1	(0004000),
-TAB2	(0010000),
-TAB3	(0014000),
-BSDLY	(0020000),
-BS0	(0000000),
-BS1	(0020000),
-FFDLY	(0100000),
-FF0	(0000000),
-FF1	(0100000),
-VTDLY	(0040000),
-VT0	(0000000),
-VT1	(0040000),
-XTABS	(0014000);
-
+public enum TerminalControlActions {
+    /**
+     * The change occurs immediately.
+     */
+    TCSANOW     (00000001),
+    /**
+     * The change occurs after all output to the file descriptor has been 
+     * transmitted.
+     */
+    TCSADRAIN   (00000002),
+    /**
+     * The change occurs after all output to the file descriptor has been
+     * transmitted and all input that has been received but not read will be
+     * discarded before the change is made.
+     */
+    TCSAFLUSH   (00000004);
+    
     public final int value;
     
-    OutputFlags(int value){
+    TerminalControlActions(int value){
         this.value = value;
     }
 }

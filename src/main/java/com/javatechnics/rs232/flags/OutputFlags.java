@@ -13,24 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.javatechnics.rs232;
+package com.javatechnics.rs232.flags;
 
-import java.io.IOException;
-
-/** An Openable is an object that can open an RS232/COM port. The open method 
- * attempts to acquire system COM resource previously specified to the object
- * by some other means.
+/**
  *
  * @author Kerry Billingham <java@avionicengineers.com>
  */
-public interface Openable {
+public enum OutputFlags {
+OPOST	(0000001),
+OLCUC	(0000002),
+ONLCR	(0000004),
+OCRNL	(0000010),
+ONOCR	(0000020),
+ONLRET	(0000040),
+OFILL	(0000100),
+OFDEL	(0000200),
+NLDLY	(0000400),
+NL0	(0000000),
+NL1	(0000400),
+CRDLY	(0003000),
+CR0	(0000000),
+CR1	(0001000),
+CR2	(0002000),
+CR3	(0003000),
+TABDLY	(0014000),
+TAB0	(0000000),
+TAB1	(0004000),
+TAB2	(0010000),
+TAB3	(0014000),
+BSDLY	(0020000),
+BS0	(0000000),
+BS1	(0020000),
+FFDLY	(0100000),
+FF0	(0000000),
+FF1	(0100000),
+VTDLY	(0040000),
+VT0	(0000000),
+VT1	(0040000),
+XTABS	(0014000);
+
+    public final int value;
     
-    /**
-     * Open an RS232/COM port resource.
-     * @param path String representing the path in the file structure to the port.
-     * @param flags the flags used to open the COM port.
-     * @return TRUE if successful.
-     * @throws IOException if an I/O error occurs.
-     */
-    public boolean open(String path, int flags) throws IOException;
+    OutputFlags(int value){
+        this.value = value;
+    }
 }

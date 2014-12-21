@@ -13,31 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.javatechnics.rs232;
+package com.javatechnics.rs232.flags;
 
-/**
+import java.io.IOException;
+
+/** An Openable is an object that can open an RS232/COM port. The open method 
+ * attempts to acquire system COM resource previously specified to the object
+ * by some other means.
  *
  * @author Kerry Billingham <java@avionicengineers.com>
  */
-public enum ModemControlFlags {
-    TIOCM_LE	(0x001),
-    TIOCM_DTR	(0x002),
-    TIOCM_RTS	(0x004),
-    TIOCM_ST	(0x008),
-    TIOCM_SR	(0x010),
-    TIOCM_CTS	(0x020),
-    TIOCM_CAR	(0x040),
-    TIOCM_RNG	(0x080),
-    TIOCM_DSR	(0x100),
-    TIOCM_CD	(TIOCM_CAR.value),
-    TIOCM_RI	(TIOCM_RNG.value);
+public interface Openable {
     
-    public final int value;
-
-    private ModemControlFlags(int value) {
-        this.value = value;
-    }
-    
-    
-    
+    /**
+     * Open an RS232/COM port resource.
+     * @param path String representing the path in the file structure to the port.
+     * @param flags the flags used to open the COM port.
+     * @return TRUE if successful.
+     * @throws IOException if an I/O error occurs.
+     */
+    public boolean open(String path, int flags) throws IOException;
 }
