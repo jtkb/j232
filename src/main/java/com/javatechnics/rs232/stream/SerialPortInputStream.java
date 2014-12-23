@@ -24,21 +24,30 @@ import java.io.InputStream;
  */
 public class SerialPortInputStream extends InputStream{
 
-    private boolean closed = true;
-            
+    private int serialPortFileDescriptor = -1;
+    
+    public SerialPortInputStream(int fileDescriptor){
+        this.serialPortFileDescriptor = fileDescriptor;
+    }
+    
+    private native int readNative(int fileDescriptor, 
+                                    byte[] buffer,
+                                    int offset,
+                                    int length) throws IOException;
+    
     @Override
     public boolean markSupported() {
-        return super.markSupported(); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     @Override
     public synchronized void reset() throws IOException {
-        super.reset(); //To change body of generated methods, choose Tools | Templates.
+        super.reset(); 
     }
 
     @Override
     public synchronized void mark(int readlimit) {
-        super.mark(readlimit); //To change body of generated methods, choose Tools | Templates.
+        super.mark(readlimit); 
     }
 
     @Override
@@ -48,17 +57,21 @@ public class SerialPortInputStream extends InputStream{
 
     @Override
     public int available() throws IOException {
-        return super.available(); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
 
     @Override
     public long skip(long n) throws IOException {
-        return super.skip(n); //To change body of generated methods, choose Tools | Templates.
+        throw new IOException("Skip not supported.");
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
-        return super.read(b, off, len); //To change body of generated methods, choose Tools | Templates.
+        if (len - off > b.length)
+            throw new IOException("Buffer too short: Buffer length = " + b.length +
+                                    " Buffer offset: " + off +
+                                    " Read size: " + len);
+        return readNative(serialPortFileDescriptor, b, off, len);
     }
 
     @Override
@@ -71,7 +84,4 @@ public class SerialPortInputStream extends InputStream{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public boolean isClosed(){
-        return closed;
-    }
 }

@@ -98,6 +98,44 @@ public class Serial implements Closeable, Openable {
     private native TermIOS getNativeTerminalAttributes(int fileDescriptor)
                                                     throws IOException;
     
+    
+    // #####################################################################
+    //  
+    //                      TEST FUNCTION STARTS HERE
+    //
+    // ####################################################################
+    
+    
+    private native int nativePreparePort(int fileDescriptor) throws IOException;
+    
+    private native int nativeTestOpen() throws IOException;
+    
+    private native int nativeTestOpen(String deviceFile, int flags) throws IOException;
+    
+    public int testOpenPort() throws IOException{
+        fileDescriptor = nativeTestOpen();
+        portOpen = true;
+        serialPortInputStream = new SerialPortInputStream(fileDescriptor);
+        System.out.println("File descriptor: " + fileDescriptor);
+        return 0;
+    }
+    
+    public int testOpenPort(String deviceFile, int flags) throws IOException{
+        fileDescriptor = nativeTestOpen(deviceFile, flags);
+        portOpen = true;
+        serialPortInputStream = new SerialPortInputStream(fileDescriptor);
+        System.out.println("File descriptor: " + fileDescriptor);
+        return 0;
+    }
+    
+    public int preparePort() throws IOException{
+        return nativePreparePort(fileDescriptor);
+    }
+    // ####################################################################
+    //
+    //                        END TEST FUNCTION HERE
+    //
+    // ###################################################################
     /**
      * Call through to native ioctl() function to get the Modem control/serial
      * port settings.
@@ -163,9 +201,14 @@ public class Serial implements Closeable, Openable {
         return serialPortOutputStream;
     }
  
+    /**
+     * Returns the InputStream associated with the serial port.
+     * @return the InputStream
+     * @throws IOException if an I/O error occurs including if inputstream
+     * is null.
+     */
     public InputStream getInputStream() throws IOException{
         if (serialPortInputStream == null) throw new IOException();
-        if (serialPortInputStream.isClosed()) throw new IOException();
         return serialPortInputStream;
     }
 
@@ -175,8 +218,11 @@ public class Serial implements Closeable, Openable {
      * @throws IOException if an IOException occurs during call.
      */
     public void close() throws IOException {
+        if (!portOpen) throw new IOException("Serial port already closed.");
         int return_value = closeSerialPort(fileDescriptor);
         if (return_value == -1) throw new IOException("");
+        serialPortInputStream = null;
+        portOpen = false;
         fileDescriptor = -1;    // Restore FD to -1
     }
 
@@ -192,6 +238,8 @@ public class Serial implements Closeable, Openable {
     public boolean open(String path, int flags) throws IOException {
         if ((fileDescriptor = openSerialPort(path, flags)) > -1){
             portOpen = true;
+            serialPortInputStream = new SerialPortInputStream(fileDescriptor);
+            System.out.println("File descriptor: " + fileDescriptor);
         }
         return portOpen;
     }
