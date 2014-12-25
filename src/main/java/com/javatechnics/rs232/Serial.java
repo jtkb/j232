@@ -95,47 +95,18 @@ public class Serial implements Closeable, Openable {
                                                     TermIOS termios) throws 
                                                         IOException;
     
+    /**
+     * Call through to the native library to get the serial port settings.
+     * @param fileDescriptor the file decriptor of the serial port
+     * @return a {@link com.javatechnics.rs232.TermIOS} object representing
+     * the serial port's current settings or NULL if an error occurs and an 
+     * exception is not thrown.
+     * @throws IOException if an error occurs.
+     */
     private native TermIOS getNativeTerminalAttributes(int fileDescriptor)
                                                     throws IOException;
     
     
-    // #####################################################################
-    //  
-    //                      TEST FUNCTION STARTS HERE
-    //
-    // ####################################################################
-    
-    
-    private native int nativePreparePort(int fileDescriptor) throws IOException;
-    
-    private native int nativeTestOpen() throws IOException;
-    
-    private native int nativeTestOpen(String deviceFile, int flags) throws IOException;
-    
-    public int testOpenPort() throws IOException{
-        fileDescriptor = nativeTestOpen();
-        portOpen = true;
-        serialPortInputStream = new SerialPortInputStream(fileDescriptor);
-        System.out.println("File descriptor: " + fileDescriptor);
-        return 0;
-    }
-    
-    public int testOpenPort(String deviceFile, int flags) throws IOException{
-        fileDescriptor = nativeTestOpen(deviceFile, flags);
-        portOpen = true;
-        serialPortInputStream = new SerialPortInputStream(fileDescriptor);
-        System.out.println("File descriptor: " + fileDescriptor);
-        return 0;
-    }
-    
-    public int preparePort() throws IOException{
-        return nativePreparePort(fileDescriptor);
-    }
-    // ####################################################################
-    //
-    //                        END TEST FUNCTION HERE
-    //
-    // ###################################################################
     /**
      * Call through to native ioctl() function to get the Modem control/serial
      * port settings.
