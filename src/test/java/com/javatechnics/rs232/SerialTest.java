@@ -144,8 +144,9 @@ public class SerialTest {
             modemControlBitsToSet = preTestModemControlBits & ~ModemControlFlags.TIOCM_RTS.value;
             modemControlBitsToSet &= ~ModemControlFlags.TIOCM_DTR.value;
             printMessage("Pre-test modem control bits :" + preTestModemControlBits);
+            printMessage("Modem control bits to set: " +  modemControlBitsToSet);
             serial.setModemControlbits(modemControlBitsToSet);
-            assertEquals("Unable to set modem control bits.", modemControlBitsToSet, serial.getModemControlBits() & 0x01FF);
+            assertEquals("Unable to set modem control bits.", modemControlBitsToSet, serial.getModemControlBits() & 0x0E1FF);
             printMessage("Post-test modem control bits: " + serial.getModemControlBits());
         } catch (IOException ex) {
             fail("Testing Modem control bits failed: " + ex);

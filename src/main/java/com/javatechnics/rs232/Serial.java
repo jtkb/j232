@@ -144,6 +144,23 @@ public class Serial implements Closeable, Openable {
     private native int nativeTCFlush(int fileDescriptor, int queueSelector)
                                                     throws IOException;
     
+    //########################################################################
+    //
+    //              TEST METHODS
+    //
+    //########################################################################
+    
+    private native int nativeTestRead(int fileDescriptor, int flags) throws IOException;
+    
+    public int testRead() throws IOException{
+        return nativeTestRead(fileDescriptor, 0);
+    }
+    
+    //########################################################################
+    //
+    //          END OF TEST METHODS
+    //
+    //########################################################################
     /**
      * Static code here in particular this is where the 
      */
