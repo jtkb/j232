@@ -16,31 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.javatechnics.rs232.flags;
+package com.javatechnics.rs232;
 
 /**
  *
- * @author Kerry Billingham <java@avionicengineers.com>
+ * @author Kerry Billingham <contact@AvionicEngineers.com>
  */
-public enum ModemControlFlags {
-    TIOCM_LE	(0x001),
-    TIOCM_DTR	(0x002),
-    TIOCM_RTS	(0x004),
-    TIOCM_ST	(0x008),
-    TIOCM_SR	(0x010),
-    TIOCM_CTS	(0x020),
-    TIOCM_CAR	(0x040),
-    TIOCM_RNG	(0x080),
-    TIOCM_DSR	(0x100),
-    TIOCM_CD	(TIOCM_CAR.value),
-    TIOCM_RI	(TIOCM_RNG.value);
-    
-    public final int value;
-
-    private ModemControlFlags(int value) {
-        this.value = value;
-    }
-    
-    
+public class NewClass {
     
 }
