@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.javatechnics.rs232;
+package com.javatechnics.rs232.struct;
 
 /**
  * This class mimics the termios native structure.

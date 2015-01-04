@@ -15,6 +15,8 @@
  */
 package com.javatechnics.rs232;
 
+import com.javatechnics.rs232.struct.TermIOS;
+import com.javatechnics.rs232.struct.ControlCharacters;
 import com.javatechnics.rs232.flags.TerminalControlActions;
 import com.javatechnics.rs232.flags.OpenFlags;
 import com.javatechnics.rs232.flags.InputFlags;

@@ -23,39 +23,81 @@ import java.io.OutputStream;
 
 /**
  *
- * @author kerry
+ * @author Kerry Billingham <contact@AvionicEngineers.com>
  */
 public class SerialPortOutputStream extends OutputStream{
     
-    private boolean closed = true;
+    private int serialPortFileDescriptor = -1;
     
+    public SerialPortOutputStream(int fileDescriptor){
+        serialPortFileDescriptor = fileDescriptor;
+    }
+    
+    /**
+     * The native function that writes data to the serial port.
+     * @param fileDescriptor file descriptor of the serial port.
+     * @param buffer is from where the data will be read.
+     * @param offset is the index in buffer where reading will begin from.
+     * @param length of the buffer.
+     * @throws IOException if an error occurs
+     */
+    private native void nativeWrite(int fileDescriptor, byte[] buffer,
+                                    int offset, int length) throws IOException;
+    /**
+     * Closes the Outputstream. This method does nothing. To close the
+     * OutputStream close the associated Serial object.
+     * @throws IOException 
+     */
     @Override
     public void close() throws IOException {
-        super.close(); //To change body of generated methods, choose Tools | Templates.
+        super.close();
     }
 
+    /**
+     * Forces any buffered output data to be written to the serial port. this
+     * method does nothing as no buffering takes place.
+     * @throws IOException 
+     */
     @Override
     public void flush() throws IOException {
-        super.flush(); //To change body of generated methods, choose Tools | Templates.
+        super.flush(); 
     }
 
+    /**
+     * Writes a specified buffer to the serial port beginning at a specified 
+     * offset in the buffer.
+     * @param b a byte array containing the byte data to be written.
+     * @param off the index into the buffer from where to begin writing from. 
+     * Must be greater or equal to zero otherwise exception will be thrown.
+     * @param len the length of the byte array containing the data.
+     * @throws IOException if an error occurs.
+     */
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        super.write(b, off, len); //To change body of generated methods, choose Tools | Templates.
+        if (off < 0) throw new IOException("Offset less than zero.");
+        nativeWrite(serialPortFileDescriptor, b, off, len);
     }
 
+    /**
+     * Writes a specified byte array to the serial port.
+     * @param b a byte array containing the data to be written.
+     * @throws IOException if an error occurs.
+     */
     @Override
     public void write(byte[] b) throws IOException {
-        super.write(b); //To change body of generated methods, choose Tools | Templates.
+        write(b, 0, b.length);
     }
 
+    /**
+     * Writes a single integer, as a byte, to the serial port. Only the lower
+     * 8 bits of the integer are written.
+     * @param b the integer value to write to the serial port.
+     * @throws IOException if an error occurs.
+     */
     @Override
     public void write(int b) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        byte[] b2 = {(byte)(0xFF & b)};
+        write(b2, 0, 1);
     }
-    
-    public boolean isClosed(){
-        return closed;
-    }
-    
+        
 }

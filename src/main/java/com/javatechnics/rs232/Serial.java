@@ -18,10 +18,11 @@
  */
 package com.javatechnics.rs232;
 
+import com.javatechnics.rs232.struct.TermIOS;
 import com.javatechnics.rs232.flags.IOCTRLRequests;
 import com.javatechnics.rs232.flags.QueueSelector;
-import com.javatechnics.rs232.stream.SerialPortInputStream;
-import com.javatechnics.rs232.stream.SerialPortOutputStream;
+import com.javatechnics.rs232.stream.SerialPortDataInputStream;
+import com.javatechnics.rs232.stream.SerialPortDataOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,11 +48,11 @@ public class Serial implements Closeable, Openable {
     /**
      * The InputStream object for the serial port.
      */
-    private SerialPortInputStream serialPortInputStream = null;
+    private SerialPortDataInputStream serialPortDataInputStream = null;
     /**
      * The OutputStream object for the serial port.
      */
-    private SerialPortOutputStream serialPortOutputStream = null;
+    private SerialPortDataOutputStream serialPortDataOutputStream = null;
     /**
      * Returns the version number of the underlying native library.
      * @return the version number of the library.
@@ -147,26 +148,6 @@ public class Serial implements Closeable, Openable {
     private native int nativeTCFlush(int fileDescriptor, int queueSelector)
                                                     throws IOException;
     
-    //########################################################################
-    //
-    //              TEST METHODS
-    //
-    //########################################################################
-    
-    private native int nativeTestRead(int fileDescriptor, int flags) throws IOException;
-    
-    public int testRead() throws IOException{
-        return nativeTestRead(fileDescriptor, 0);
-    }
-    
-    //########################################################################
-    //
-    //          END OF TEST METHODS
-    //
-    //########################################################################
-    /**
-     * Static code here in particular this is where the 
-     */
     static {
         /*
         * The following must NOT be removed. This and its accompanying native library
@@ -187,9 +168,8 @@ public class Serial implements Closeable, Openable {
      * is NULL or closed.
      */
     public OutputStream getOutputStream() throws IOException {
-        if (serialPortOutputStream == null) throw new IOException();
-        if (serialPortOutputStream.isClosed()) throw new IOException();
-        return serialPortOutputStream;
+        if (serialPortDataOutputStream == null) throw new IOException();
+        return serialPortDataOutputStream;
     }
  
     /**
@@ -199,10 +179,30 @@ public class Serial implements Closeable, Openable {
      * is null.
      */
     public InputStream getInputStream() throws IOException{
-        if (serialPortInputStream == null) throw new IOException();
-        return serialPortInputStream;
+        if (serialPortDataInputStream == null) throw new IOException();
+        return serialPortDataInputStream;
     }
 
+    /**
+     * Returns the DataOutputStream associated with the serial port.
+     * @return the DataOutputStream object.
+     * @throws IOException if the DataOutputStream object is NULL.
+     */
+    public SerialPortDataOutputStream getDataOutputStream() throws IOException{
+        if (serialPortDataOutputStream == null) throw new IOException("DataOutputStream is null.");
+        return serialPortDataOutputStream;
+    }
+    
+    /**
+     * Returns the DataInputStream associated with the serial port.
+     * @return the DataInputStream object.
+     * @throws IOException if the DataInputStream object is NULL.
+     */
+    public SerialPortDataInputStream getDataInputStream() throws IOException{
+        if (serialPortDataInputStream == null) throw new IOException("DataInputStream is null.");
+        return serialPortDataInputStream;
+    }
+    
     /**
      * Implementation of the Closeable interface. Call this method when the
      * serial port is to be closed.
@@ -212,7 +212,7 @@ public class Serial implements Closeable, Openable {
         if (!portOpen) throw new IOException("Serial port already closed.");
         int return_value = closeSerialPort(fileDescriptor);
         if (return_value == -1) throw new IOException("");
-        serialPortInputStream = null;
+        serialPortDataInputStream = null;
         portOpen = false;
         fileDescriptor = -1;    // Restore FD to -1
     }
@@ -229,8 +229,10 @@ public class Serial implements Closeable, Openable {
     public boolean open(String path, int flags) throws IOException {
         if ((fileDescriptor = openSerialPort(path, flags)) > -1){
             portOpen = true;
-            serialPortInputStream = new SerialPortInputStream(fileDescriptor);
-            System.out.println("File descriptor: " + fileDescriptor);
+            serialPortDataInputStream = 
+                    new SerialPortDataInputStream(fileDescriptor);
+            serialPortDataOutputStream = 
+                    new SerialPortDataOutputStream(fileDescriptor);
         }
         return portOpen;
     }

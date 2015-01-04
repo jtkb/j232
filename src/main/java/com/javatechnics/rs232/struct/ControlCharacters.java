@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.javatechnics.rs232;
+package com.javatechnics.rs232.struct;
 
 /**
  * This enum represents the underlying Unix local flags used in the termios
