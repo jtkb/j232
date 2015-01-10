@@ -287,7 +287,7 @@ public class Serial implements Closeable, Openable {
      */
     public int setTerminalAttributes(int terminalControlAction, TermIOS termios)
             throws IOException {
-        if (termios == null) throw new IOException("");
+        if (termios == null) throw new IOException("TermIOS structure is null.");
         return setNativeTerminalAttributes(fileDescriptor, 
                 terminalControlAction, 
                 termios);

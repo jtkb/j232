@@ -25,8 +25,6 @@ import com.javatechnics.rs232.flags.LocalFlags;
 import com.javatechnics.rs232.flags.ControlFlags;
 import com.javatechnics.rs232.flags.QueueSelector;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
