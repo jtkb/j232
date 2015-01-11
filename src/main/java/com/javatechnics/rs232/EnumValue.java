@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Kerry Billingham <contact@AvionicEngineers.com>.
+ * Copyright (C) 2015 Kerry Billingham <contact@AvionicEngineers.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,24 +18,16 @@
  */
 package com.javatechnics.rs232;
 
-import com.javatechnics.rs232.flags.OpenFlags;
-import java.io.IOException;
-import java.util.EnumSet;
-
-/** An Openable is an object that can open an RS232/COM port. The open method 
- * attempts to acquire system COM resource previously specified to the object
- * by some other means.
- *
- * @author Kerry Billingham <java@avionicengineers.com>
+/**
+ * This method is primarily intended to be implemented by Enums and 
+ * allows the retrieval of the numeric value associated with a member of the 
+ * enum. Implementing this interface ensures type-safe method parameter passing. 
+ * @author Kerry Billingham <contact@AvionicEngineers.com>
  */
-public interface Openable {
-    
+public interface EnumValue {
     /**
-     * Open an RS232/COM port resource.
-     * @param path String representing the path in the file structure to the port.
-     * @param flags the flags used to open the COM port.
-     * @throws IOException if an I/O error occurs.
-     * @return the boolean
+     * Returns the numeric value of en enumeration member.
+     * @return int value of the enum.
      */
-    public boolean open(String path, EnumSet<OpenFlags> flags) throws IOException;
+    int getValue();
 }

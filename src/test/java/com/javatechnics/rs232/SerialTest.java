@@ -25,6 +25,7 @@ import com.javatechnics.rs232.flags.LocalFlags;
 import com.javatechnics.rs232.flags.ControlFlags;
 import com.javatechnics.rs232.flags.QueueSelector;
 import java.io.IOException;
+import java.util.EnumSet;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -100,7 +101,7 @@ public class SerialTest {
         try {            
             assertTrue("Opening file", serial.open("/dev/" + SERIAL_PORT_PREFIX
                                             + "0",
-                                            OpenFlags.O_RDWR.value));
+                                            EnumSet.of(OpenFlags.O_RDWR)));
         } catch (IOException ex) {
             fail("IOException: " + ex);
         }

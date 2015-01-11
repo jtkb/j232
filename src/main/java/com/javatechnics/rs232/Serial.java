@@ -20,6 +20,8 @@ package com.javatechnics.rs232;
 
 import com.javatechnics.rs232.struct.TermIOS;
 import com.javatechnics.rs232.flags.IOCTRLRequests;
+import com.javatechnics.rs232.flags.InputFlags;
+import com.javatechnics.rs232.flags.OpenFlags;
 import com.javatechnics.rs232.flags.QueueSelector;
 import com.javatechnics.rs232.stream.SerialPortDataInputStream;
 import com.javatechnics.rs232.stream.SerialPortDataOutputStream;
@@ -27,6 +29,9 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -160,6 +165,23 @@ public class Serial implements Closeable, Openable {
         //Load Native Library here.
         System.loadLibrary("j232");    
     }
+    
+    /**
+     * This is a helper function that converts a Set of EnumValue objects
+     * into an OR-ed single int value.
+     * @param <T> any type that extends EnumValue.
+     * @param flags A Set of EnumValues.
+     * @return a single int that represents the OR-ed values within the specified
+     * set.
+     */
+    public  static <T extends EnumValue> int orValues(Set<T> flags){
+        int f = 0;
+        Iterator<T> it = flags.iterator();
+        while (it.hasNext()) {
+            f |= it.next().getValue();
+        }
+        return f;
+    }
 
     /**
      * Returns the underlying OutputStream.
@@ -222,12 +244,11 @@ public class Serial implements Closeable, Openable {
      * @param path the file-system path to the device e.g. /dev/ttyS0.
      * @param flags flags used to open the device with. See 
      * {@link com.javatechnics.rs232.OpenFlags}.
-     * @return true if the port was successfully opened false if an error
-     * occured AND the native code could not throw an IOException.
      * @throws IOException
+     * @return the boolean
      */
-    public boolean open(String path, int flags) throws IOException {
-        if ((fileDescriptor = openSerialPort(path, flags)) > -1){
+    public boolean open(String path, EnumSet<OpenFlags> flags) throws IOException {
+        if ((fileDescriptor = openSerialPort(path, orValues(flags))) > -1){
             portOpen = true;
             serialPortDataInputStream = 
                     new SerialPortDataInputStream(fileDescriptor);

@@ -18,6 +18,8 @@
  */
 package com.javatechnics.rs232.flags;
 
+import com.javatechnics.rs232.EnumValue;
+
 /** This class represents the underlying Unix open() function flags. They make
  * no attempt to match in value to those found in fcntl.h as these could, in
  * theory change. However The values defined here are under our control and
@@ -26,7 +28,7 @@ package com.javatechnics.rs232.flags;
  *
  * @author Kerry Billingham <java@avionicengineers.com>
  */
-public enum OpenFlags {
+public enum OpenFlags implements EnumValue{
     O_APPEND    (0x00001),
     O_ASYNC     (0x00002),
     O_CLOEXEC   (0x00004),
@@ -50,6 +52,10 @@ public enum OpenFlags {
     
     OpenFlags(int value){
         this.value = value;
+    }
+
+    public int getValue() {
+        return value;
     }
     
 }
