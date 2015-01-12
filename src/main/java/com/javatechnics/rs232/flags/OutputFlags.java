@@ -18,11 +18,13 @@
  */
 package com.javatechnics.rs232.flags;
 
+import com.javatechnics.rs232.EnumValue;
+
 /**
  *
  * @author Kerry Billingham <java@avionicengineers.com>
  */
-public enum OutputFlags {
+public enum OutputFlags implements EnumValue{
 OPOST	(0000001),
 OLCUC	(0000002),
 ONLCR	(0000004),
@@ -59,5 +61,13 @@ XTABS	(0014000);
     
     OutputFlags(int value){
         this.value = value;
+    }
+    
+    /**
+     * Returns the numeric value of this member of the enumeration.
+     * @return the numeric value of this member.
+     */
+    public int getValue() {
+        return value;
     }
 }

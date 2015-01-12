@@ -18,6 +18,8 @@
  */
 package com.javatechnics.rs232.flags;
 
+import com.javatechnics.rs232.EnumValue;
+
 /**
  * This enum represents the underlying Unix local flags used in the termios
  * structure, see termios.h. The values found here make no attempt to match those
@@ -26,7 +28,7 @@ package com.javatechnics.rs232.flags;
  * those found in the native header files.
  * @author Kerry Billingham <java@avionicengineers.com>
  */
-public enum LocalFlags {
+public enum LocalFlags implements EnumValue{
     ISIG	(0000001),
     ICANON	(0000002),
     XCASE	(0000004),
@@ -46,5 +48,13 @@ public enum LocalFlags {
     
     LocalFlags(int value){
         this.value = value;
+    }
+
+    /**
+     * Returns the numeric value of this member of the enumeration.
+     * @return the numeric value of this member.
+     */
+    public int getValue() {
+        return value;
     }
 }

@@ -18,6 +18,8 @@
  */
 package com.javatechnics.rs232.flags;
 
+import com.javatechnics.rs232.EnumValue;
+
 /**
  * This enum represents the underlying Unix control flags used in the termios
  * structure, see termios.h. The values found here make no attempt to match those
@@ -26,7 +28,7 @@ package com.javatechnics.rs232.flags;
  * those found in the native header files.
  * @author Kerry Billingham <java@avionicengineers.com>
  */
-public enum ControlFlags {
+public enum ControlFlags implements EnumValue{
     CBAUD       (0010017),
     B0          (0000000),
     B50         (0000001),
@@ -78,6 +80,14 @@ public enum ControlFlags {
     
     ControlFlags (int value){
         this.value = value;
+    }
+
+    /**
+     * Returns the numeric value of this member of the enumeration.
+     * @return the numeric value of this member.
+     */
+    public int getValue() {
+        return value;
     }
     
 }
