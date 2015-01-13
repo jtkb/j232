@@ -118,4 +118,17 @@ public class TermIOSTest {
         assertEquals("Output flags returned do NOT match those set.", enumFlags, result);
         System.out.print("passed.\n");
     }
+    
+    @Test
+    public void testAppendingOutputFlags(){
+        System.out.print("Testing the addition of output flags...");
+        TermIOS termios = new TermIOS();
+        assertEquals("Did not append new Set of Output flags.", true, 
+                termios.addOutputFlagsEnumSet(EnumSet.of(OutputFlags.BS1, OutputFlags.OCRNL)));
+        assertEquals("The expected Outputflags Enumset do not match those set.",
+                EnumSet.of(OutputFlags.NL0, OutputFlags.CR0, OutputFlags.TAB0,
+                OutputFlags.FF0, OutputFlags.VT0, 
+                OutputFlags.OCRNL, OutputFlags.BS1), termios.getOutputFlagsEnumSet());
+        System.out.print("TermIOS OutputFlags: " + termios.getOutputFlagsEnumSet() + " passed.\n");
+    }
 }

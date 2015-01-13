@@ -137,7 +137,7 @@ public class TermIOS {
                     }
                     break;
                 case TABDLY:
-                    if ((ofg.getValue() & c_oflag & OutputFlags.TABDLY.getValue()) == OutputFlags.TABDLY.getValue()){
+                    if ((ofg.getValue() & c_oflag & OutputFlags.TABDLY.getValue()) == OutputFlags.TAB0.getValue()){
                         flags.add(OutputFlags.TAB0);
                     }else{
                         int value = ofg.getValue();
@@ -153,7 +153,7 @@ public class TermIOS {
                     }
                     break;
                 case BSDLY:
-                    if ((ofg.getValue() & c_oflag &OutputFlags.BSDLY.getValue()) == OutputFlags.BS0.getValue()){
+                    if ((ofg.getValue() & c_oflag & OutputFlags.BSDLY.getValue()) == OutputFlags.BS0.getValue()){
                         flags.add(OutputFlags.BS0);
                     }else{
                         flags.add(OutputFlags.BS1);
@@ -173,7 +173,14 @@ public class TermIOS {
                         flags.add(OutputFlags.VT1);
                     }
                     break;                    
-                default:
+                case OPOST:
+                case OLCUC:
+                case ONLCR:
+                case OCRNL:
+                case ONLRET:
+                case OFILL:
+                case OFDEL:
+                case XTABS:
                     if ((ofg.getValue() & c_oflag) == ofg.getValue()){
                         flags.add(ofg);
                     }
@@ -183,6 +190,18 @@ public class TermIOS {
         
         return flags.isEmpty() ? EnumSet.noneOf(OutputFlags.class) : 
                                     EnumSet.copyOf(flags);
+    }
+    
+    /**
+     * Adds an EnumSet of OutputFlags 
+     * @param flags
+     * @return TRUE if the flags specified were not already set, FALSE otherwise.
+     */
+    public boolean addOutputFlagsEnumSet(EnumSet<OutputFlags> flags){
+        EnumSet<OutputFlags> currentflags = getOutputFlagsEnumSet();
+        boolean result = currentflags.addAll(flags);
+        setOutputFlags(currentflags);
+        return result;
     }
     
     /**
