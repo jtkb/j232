@@ -19,6 +19,7 @@
 package com.javatechnics.rs232.struct;
 
 import com.javatechnics.rs232.flags.InputFlags;
+import com.javatechnics.rs232.flags.OutputFlags;
 import java.util.EnumSet;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -77,7 +78,7 @@ public class TermIOSTest {
      */
     @Test
     public void testGetInputFlags() {
-        System.out.println("getInputFlags");
+        System.out.print("Testing getInputFlags()...");
         TermIOS instance = new TermIOS();
         EnumSet<InputFlags> enumFlags = EnumSet.of(InputFlags.IGNPAR, InputFlags.ISTRIP,
                                                     InputFlags.IUTF8);
@@ -86,7 +87,7 @@ public class TermIOSTest {
         instance.setInputFlags(enumFlags);
         int result = instance.getInputFlags();
         assertEquals("Input flags returned do NOT match those set.",expResult, result);
-        System.out.println("Test of getInputFlags() passed.");
+        System.out.print("passed.\n");
         
     }
     
@@ -95,10 +96,26 @@ public class TermIOSTest {
      */
     @Test
     public void testEmptyGetInputFlags(){
-        System.out.println("Testing the handling of an empty input flags");
+        System.out.print("Testing the handling of an empty input flags...");
         TermIOS termIOS = new TermIOS();
         EnumSet<InputFlags> ifs = termIOS.getInputFlagsEnumSet();
         assertTrue("The TermIOS did not return an empty EnumSet <InputFlags>.", 
                 ifs.isEmpty());
+        System.out.print("passed.\n");
+    }
+    
+    @Test
+    public void testGetOutputFlags(){
+        System.out.print("Testing getOutputFlags..");
+        TermIOS instance = new TermIOS();
+        EnumSet<OutputFlags> enumFlags = EnumSet.of(OutputFlags.OPOST,
+                OutputFlags.NL0, OutputFlags.CR0, OutputFlags.TAB0,
+                OutputFlags.BS0, OutputFlags.FF0, OutputFlags.VT0,
+                                                    OutputFlags.OLCUC,
+                                                    OutputFlags.FF0);
+        instance.setOutputFlags(enumFlags);
+        EnumSet<OutputFlags> result = instance.getOutputFlagsEnumSet();
+        assertEquals("Output flags returned do NOT match those set.", enumFlags, result);
+        System.out.print("passed.\n");
     }
 }

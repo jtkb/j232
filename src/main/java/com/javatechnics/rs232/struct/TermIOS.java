@@ -19,6 +19,7 @@
 package com.javatechnics.rs232.struct;
 
 import com.javatechnics.rs232.flags.InputFlags;
+import com.javatechnics.rs232.flags.OutputFlags;
 import com.javatechnics.rs232.utility.BitOperation;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -37,7 +38,7 @@ public class TermIOS {
     /**
      * Output mode flags.
      */
-    public int c_oflag = 0;
+    private int c_oflag = 0;
     /**
      * Control flags.
      */
@@ -86,5 +87,112 @@ public class TermIOS {
      */
     public int getInputFlags(){
         return c_iflag;
+    }
+    
+    /**
+     * Sets the desired output flags of this TermIOS class. The flags mimic
+     * those found within the termios struct in termios.h.
+     * @param outputFlags 
+     */
+    public void setOutputFlags(EnumSet<OutputFlags> outputFlags){
+        c_oflag = BitOperation.orValues(outputFlags);
+    }
+    
+    /**
+     * Gets the current output flags of the TermIOS class as an EnumSet.
+     * @return and EnumSet<OutputFlags> of output flags. For flags which have
+     * a mask flag e.g. NLDLY, NL0 & NL1 if a zero value results if when 
+     * c_oflag is AND with its delay mask then the zero value for that set of
+     * flags is return. If no output flags have currently been set then an empty 
+     * enumSet is returned.
+     */
+    public EnumSet<OutputFlags> getOutputFlagsEnumSet(){
+        Set<OutputFlags> flags = new HashSet<OutputFlags>();
+        for (OutputFlags ofg : OutputFlags.values()){
+            switch (ofg){
+                case NLDLY:
+                    if ((ofg.getValue() & 
+                            c_oflag & 
+                            OutputFlags.NLDLY.getValue()) == OutputFlags.NL0.getValue()){
+                        flags.add(OutputFlags.NL0);
+                        
+                    }else{
+                        flags.add(OutputFlags.NL1);
+                    }
+                    break;
+                case CRDLY:
+                    if ((ofg.getValue() & c_oflag &
+                            OutputFlags.CRDLY.getValue()) == OutputFlags.CR0.getValue()){
+                        flags.add(OutputFlags.CR0);
+                    }else{
+                        if ((ofg.getValue() & c_oflag & OutputFlags.CR1.getValue()) == OutputFlags.CR1.getValue()) {
+                            flags.add(OutputFlags.CR1);
+                        }
+                        if ((ofg.getValue() & c_oflag & OutputFlags.CR2.getValue()) == OutputFlags.CR2.getValue()){
+                            flags.add(OutputFlags.CR2);
+                        }
+                        if ((ofg.getValue() & c_oflag & OutputFlags.CR3.getValue()) == OutputFlags.CR3.getValue()){
+                            flags.add(OutputFlags.CR3);
+                        }
+                    }
+                    break;
+                case TABDLY:
+                    if ((ofg.getValue() & c_oflag & OutputFlags.TABDLY.getValue()) == OutputFlags.TABDLY.getValue()){
+                        flags.add(OutputFlags.TAB0);
+                    }else{
+                        int value = ofg.getValue();
+                        if ((value & c_oflag & OutputFlags.TAB1.getValue()) == OutputFlags.TAB1.getValue()){
+                            flags.add(OutputFlags.TAB1);
+                        }
+                        if ((value & c_oflag & OutputFlags.TAB2.getValue()) == OutputFlags.TAB2.getValue()){
+                            flags.add(OutputFlags.TAB2);
+                        }
+                        if ((value & c_oflag & OutputFlags.TAB3.getValue()) == OutputFlags.TAB3.getValue()){
+                            flags.add(OutputFlags.TAB3);
+                        }
+                    }
+                    break;
+                case BSDLY:
+                    if ((ofg.getValue() & c_oflag &OutputFlags.BSDLY.getValue()) == OutputFlags.BS0.getValue()){
+                        flags.add(OutputFlags.BS0);
+                    }else{
+                        flags.add(OutputFlags.BS1);
+                    }
+                    break;
+                case FFDLY:
+                    if ((ofg.getValue() & c_oflag & OutputFlags.FFDLY.getValue()) == OutputFlags.FF0.getValue()){
+                        flags.add(OutputFlags.FF0);
+                    }else{
+                        flags.add(OutputFlags.FF1);
+                    }
+                    break;
+                case VTDLY:
+                    if ((ofg.getValue() & c_oflag & OutputFlags.VTDLY.getValue()) == OutputFlags.VT0.getValue()){
+                        flags.add(OutputFlags.VT0);
+                    }else{
+                        flags.add(OutputFlags.VT1);
+                    }
+                    break;                    
+                default:
+                    if ((ofg.getValue() & c_oflag) == ofg.getValue()){
+                        flags.add(ofg);
+                    }
+            }
+            
+        }
+        
+        return flags.isEmpty() ? EnumSet.noneOf(OutputFlags.class) : 
+                                    EnumSet.copyOf(flags);
+    }
+    
+    /**
+     * Returns an integer of the OR-ed output flags set in this TermIOS class.
+     * The values OR-ed together are those specified in 
+     * {@link com.javatechnics.rs232.flags.OutputFlags} and do not necessarily
+     * correspond with the values found in termios.h.
+     * @return the OR-ed output flag value.
+     */
+    public int getOutputFlags(){
+        return c_oflag;
     }
 }
