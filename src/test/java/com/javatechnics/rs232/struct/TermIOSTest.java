@@ -18,6 +18,7 @@
  */
 package com.javatechnics.rs232.struct;
 
+import com.javatechnics.rs232.flags.ControlFlags;
 import com.javatechnics.rs232.flags.InputFlags;
 import com.javatechnics.rs232.flags.OutputFlags;
 import java.util.EnumSet;
@@ -27,6 +28,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -130,5 +132,39 @@ public class TermIOSTest {
                 OutputFlags.FF0, OutputFlags.VT0, 
                 OutputFlags.OCRNL, OutputFlags.BS1), termios.getOutputFlagsEnumSet());
         System.out.print("TermIOS OutputFlags: " + termios.getOutputFlagsEnumSet() + " passed.\n");
+    }
+    
+    @Test //@Ignore
+    public void testSetControlFlags(){
+        System.out.print("Testing the setting of the control flags...");
+        TermIOS termios = new TermIOS();
+        termios.setControlFlags(EnumSet.of(ControlFlags.B1200, ControlFlags.B2500000, ControlFlags.CS6, ControlFlags.CS7, ControlFlags.CS8));
+        assertEquals("Control flags returned were not those requested.", 
+                EnumSet.of(ControlFlags.B3000000, ControlFlags.CS8), termios.getControlFlagsEnumSet());
+        System.out.print("passed.\n");
+    }
+    
+    @Test
+    public void testBaudRateEnumSet(){
+        System.out.print("Testing the retrieval of the baud rates...");
+        assertEquals("The set of baud rates is not correct.", 
+                EnumSet.complementOf(EnumSet.of(
+                    ControlFlags.CBAUD,
+                    ControlFlags.EXTA,
+                    ControlFlags.EXTB,
+                    ControlFlags.CSIZE,
+                    ControlFlags.CS5,
+                    ControlFlags.CS6,
+                    ControlFlags.CS7,
+                    ControlFlags.CS8,
+                    ControlFlags.CSTOPB,
+                    ControlFlags.CREAD,
+                    ControlFlags.PARENB,
+                    ControlFlags.PARODD,
+                    ControlFlags.HUPCL,
+                    ControlFlags.CLOCAL,
+                    ControlFlags.CRTSCTS)),
+                ControlFlags.getBaudRates());
+        System.out.print("passed.\n");
     }
 }

@@ -18,6 +18,7 @@
  */
 package com.javatechnics.rs232.struct;
 
+import com.javatechnics.rs232.flags.ControlFlags;
 import com.javatechnics.rs232.flags.InputFlags;
 import com.javatechnics.rs232.flags.OutputFlags;
 import com.javatechnics.rs232.utility.BitOperation;
@@ -213,5 +214,52 @@ public class TermIOS {
      */
     public int getOutputFlags(){
         return c_oflag;
+    }
+    
+    public void setControlFlags(EnumSet<ControlFlags> flags){
+        c_cflag = BitOperation.orValues(flags);
+    }
+    
+    /**
+     * Returns the 
+     * @return 
+     */
+    public EnumSet<ControlFlags> getControlFlagsEnumSet(){
+        Set<ControlFlags> flags = new HashSet<ControlFlags>();
+        for (ControlFlags cfg : ControlFlags.values()){
+            int value = cfg.getValue();
+            int flag = 0;
+            switch (cfg){
+                case CBAUD:
+                    flag = c_cflag & cfg.getValue();
+                    for (ControlFlags baud : ControlFlags.getBaudRates()){
+                        if (flag  == baud.getValue()){
+                            flags.add(baud);
+                        }
+                    }
+                    break;
+                case CSIZE:
+                    flag = c_cflag & cfg.getValue();
+                    for (ControlFlags cSizes : ControlFlags.getCharacterSizes()){
+                        if (flag == cSizes.getValue()){
+                            flags.add(cSizes);
+                            break;
+                        }
+                    }
+                    break;
+                case CSTOPB:
+                case CREAD:
+                case PARENB:
+                case PARODD:
+                case HUPCL:
+                case CLOCAL:
+                case CRTSCTS:
+                    if ((c_cflag & cfg.getValue()) == cfg.getValue()){
+                        flags.add(cfg);
+                    }
+                    break;                        
+            }
+        }
+        return flags.isEmpty() ? EnumSet.noneOf(ControlFlags.class) : EnumSet.copyOf(flags);
     }
 }
