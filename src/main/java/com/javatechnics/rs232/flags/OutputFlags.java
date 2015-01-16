@@ -19,6 +19,7 @@
 package com.javatechnics.rs232.flags;
 
 import com.javatechnics.rs232.EnumValue;
+import java.util.EnumSet;
 
 /**
  * This Enumeration represents the output flag-member of the C
@@ -174,5 +175,85 @@ public enum OutputFlags implements EnumValue{
      */
     public int getValue() {
         return value;
+    }
+    
+    /**
+     * Returns an EnumSet of all values which can be masked e.g. NLO, NL1 etc.
+     * @return an EnumSet of the maskable flags.
+     */
+    public static EnumSet<OutputFlags> getMaskableFlags(){
+        return EnumSet.of(NL0, NL1,
+                            CR0, CR1, CR2, CR3,
+                            TAB0, TAB1, TAB2, TAB3,
+                            BS0, BS1,
+                            FF0, FF1,
+                            VT0, VT1);
+    }
+    
+    /**
+     * Returns an EnumSet of all values which are used as masks 
+     * e.g. NLDLY, CRDLY.
+     * @return an EnumSet of all values that are masks.
+     */
+    public static EnumSet<OutputFlags> getMasks(){
+        return EnumSet.of(NLDLY, CRDLY, TABDLY, BSDLY,
+                            FFDLY, VTDLY);
+    }
+    
+    /**
+     * Returns an EnumSet of all values which are NOT maskable 
+     * e.g. NLDLY, OPOST etc.
+     * @return an enumSet of all values that are not maskable.
+     */
+    public static EnumSet<OutputFlags> getNonMaskableFlags(){
+        return EnumSet.complementOf(getMaskableFlags());
+    }
+    
+    /**
+     * Returns all flags that represent 'New-Line' delay values.
+     * @return an EnumSet of new-line delay values.
+     */
+    public static EnumSet<OutputFlags> getNewLineDelayFlags(){
+        return EnumSet.of(NL0,NL1);
+    }
+    
+    /**
+     * Returns all flags that represent a carriage return delay value.
+     * @return and EnumSet of carriage-return delay values.
+     */
+    public static EnumSet<OutputFlags> getCarriageReturnDelayFlags(){
+        return EnumSet.of(CR0, CR1, CR2, CR3);
+    }
+    
+    /**
+     * Returns all the flags that represent a horizontal tab delay value.
+     * @return an EnumSet of horizontal tab delay values.
+     */
+    public static EnumSet<OutputFlags> getHorizontalTabDelayFlags(){
+        return EnumSet.of(TAB0, TAB1, TAB2, TAB3);
+    }
+    
+    /**
+     * Returns all the flags that represent a backspace delay value.
+     * @return an EnumSet of backspace delay values.
+     */
+    public static EnumSet<OutputFlags> getBackspaceDelayFlags(){
+        return EnumSet.of(BS0, BS1);
+    }
+    
+    /**
+     * Returns all the flags that represent a form-feed delay.
+     * @return an EnumSet of form-feed delay values.
+     */
+    public static EnumSet<OutputFlags> getFormFeedDelayFlags(){
+        return EnumSet.of(FF0, FF1);
+    }
+    
+    /**
+     * Returns all the flags that represent a vertical-tab delay.
+     * @return an EnumSet of vertical-tab delay values.
+     */
+    public static EnumSet<OutputFlags> getVerticalTabDelayFlags(){
+        return EnumSet.of(VT0, VT1);
     }
 }

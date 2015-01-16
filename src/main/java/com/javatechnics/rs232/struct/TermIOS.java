@@ -100,6 +100,27 @@ public class TermIOS {
     }
     
     /**
+     * A helper function that produces a Set<OutputFlags> based upon
+     * a single int value and a specified Set of Outputflags.
+     * @param intFlag the integer flag value with will be transformed to a 
+     * Set<OutputFlag>.
+     * @param flagSubSet the EnumSet of OutputFlags from which one will be selected.
+     * @return the Set<OutputFlag> which will contain one OutputFlag from those
+     * specified in to the method.
+     */
+    private Set<OutputFlags> getFlag(int intFlag, EnumSet<OutputFlags> flagSubSet){
+        Set<OutputFlags> flags = new HashSet<OutputFlags>();
+        System.out.println("Integer flag : " + intFlag + flagSubSet);
+        for (OutputFlags ofg : flagSubSet){
+            if (intFlag == ofg.getValue()){
+                flags.add(ofg);
+                break;
+            }
+        }
+        return flags;
+    }
+    
+    /**
      * Gets the current output flags of the TermIOS class as an EnumSet.
      * @return and EnumSet<OutputFlags> of output flags. For flags which have
      * a mask flag e.g. NLDLY, NL0 & NL1 if a zero value results if when 
@@ -109,86 +130,43 @@ public class TermIOS {
      */
     public EnumSet<OutputFlags> getOutputFlagsEnumSet(){
         Set<OutputFlags> flags = new HashSet<OutputFlags>();
-        for (OutputFlags ofg : OutputFlags.values()){
+        System.out.println("Non-Maskable flags: " + OutputFlags.getNonMaskableFlags());
+        System.out.println("Output Flags: " + c_oflag);
+        for (OutputFlags ofg : OutputFlags.getNonMaskableFlags()){
+            int flag = c_oflag & ofg.getValue();
             switch (ofg){
                 case NLDLY:
-                    if ((ofg.getValue() & 
-                            c_oflag & 
-                            OutputFlags.NLDLY.getValue()) == OutputFlags.NL0.getValue()){
-                        flags.add(OutputFlags.NL0);
-                        
-                    }else{
-                        flags.add(OutputFlags.NL1);
-                    }
+                    flags.addAll(getFlag(flag, OutputFlags.getNewLineDelayFlags()));
                     break;
                 case CRDLY:
-                    if ((ofg.getValue() & c_oflag &
-                            OutputFlags.CRDLY.getValue()) == OutputFlags.CR0.getValue()){
-                        flags.add(OutputFlags.CR0);
-                    }else{
-                        if ((ofg.getValue() & c_oflag & OutputFlags.CR1.getValue()) == OutputFlags.CR1.getValue()) {
-                            flags.add(OutputFlags.CR1);
-                        }
-                        if ((ofg.getValue() & c_oflag & OutputFlags.CR2.getValue()) == OutputFlags.CR2.getValue()){
-                            flags.add(OutputFlags.CR2);
-                        }
-                        if ((ofg.getValue() & c_oflag & OutputFlags.CR3.getValue()) == OutputFlags.CR3.getValue()){
-                            flags.add(OutputFlags.CR3);
-                        }
-                    }
+                    flags.addAll(getFlag(flag, OutputFlags.getCarriageReturnDelayFlags()));
                     break;
                 case TABDLY:
-                    if ((ofg.getValue() & c_oflag & OutputFlags.TABDLY.getValue()) == OutputFlags.TAB0.getValue()){
-                        flags.add(OutputFlags.TAB0);
-                    }else{
-                        int value = ofg.getValue();
-                        if ((value & c_oflag & OutputFlags.TAB1.getValue()) == OutputFlags.TAB1.getValue()){
-                            flags.add(OutputFlags.TAB1);
-                        }
-                        if ((value & c_oflag & OutputFlags.TAB2.getValue()) == OutputFlags.TAB2.getValue()){
-                            flags.add(OutputFlags.TAB2);
-                        }
-                        if ((value & c_oflag & OutputFlags.TAB3.getValue()) == OutputFlags.TAB3.getValue()){
-                            flags.add(OutputFlags.TAB3);
-                        }
-                    }
+                    flags.addAll(getFlag(flag, OutputFlags.getHorizontalTabDelayFlags()));
                     break;
                 case BSDLY:
-                    if ((ofg.getValue() & c_oflag & OutputFlags.BSDLY.getValue()) == OutputFlags.BS0.getValue()){
-                        flags.add(OutputFlags.BS0);
-                    }else{
-                        flags.add(OutputFlags.BS1);
-                    }
+                    flags.addAll(getFlag(flag, OutputFlags.getBackspaceDelayFlags()));
                     break;
                 case FFDLY:
-                    if ((ofg.getValue() & c_oflag & OutputFlags.FFDLY.getValue()) == OutputFlags.FF0.getValue()){
-                        flags.add(OutputFlags.FF0);
-                    }else{
-                        flags.add(OutputFlags.FF1);
-                    }
+                    flags.addAll(getFlag(flag, OutputFlags.getFormFeedDelayFlags()));
                     break;
                 case VTDLY:
-                    if ((ofg.getValue() & c_oflag & OutputFlags.VTDLY.getValue()) == OutputFlags.VT0.getValue()){
-                        flags.add(OutputFlags.VT0);
-                    }else{
-                        flags.add(OutputFlags.VT1);
-                    }
-                    break;                    
+                    flags.addAll(getFlag(flag, OutputFlags.getVerticalTabDelayFlags()));
+                    break;
+                case OCRNL:
                 case OPOST:
                 case OLCUC:
                 case ONLCR:
-                case OCRNL:
+                case ONOCR:
                 case ONLRET:
                 case OFILL:
                 case OFDEL:
                 case XTABS:
                     if ((ofg.getValue() & c_oflag) == ofg.getValue()){
                         flags.add(ofg);
-                    }
+                    }                    
             }
-            
-        }
-        
+        }               
         return flags.isEmpty() ? EnumSet.noneOf(OutputFlags.class) : 
                                     EnumSet.copyOf(flags);
     }
