@@ -18,6 +18,7 @@
  */
 package com.javatechnics.rs232.struct;
 
+import com.javatechnics.rs232.EnumValue;
 import com.javatechnics.rs232.flags.ControlFlags;
 import com.javatechnics.rs232.flags.InputFlags;
 import com.javatechnics.rs232.flags.OutputFlags;
@@ -108,7 +109,7 @@ public class TermIOS {
      * @return the Set<OutputFlag> which will contain one OutputFlag from those
      * specified in to the method.
      */
-    private Set<OutputFlags> getFlag(int intFlag, EnumSet<OutputFlags> flagSubSet){
+    private Set<OutputFlags> getOutputFlagFromSubSet(int intFlag, EnumSet<OutputFlags> flagSubSet){
         Set<OutputFlags> flags = new HashSet<OutputFlags>();
         System.out.println("Integer flag : " + intFlag + flagSubSet);
         for (OutputFlags ofg : flagSubSet){
@@ -119,7 +120,7 @@ public class TermIOS {
         }
         return flags;
     }
-    
+        
     /**
      * Gets the current output flags of the TermIOS class as an EnumSet.
      * @return and EnumSet<OutputFlags> of output flags. For flags which have
@@ -136,22 +137,22 @@ public class TermIOS {
             int flag = c_oflag & ofg.getValue();
             switch (ofg){
                 case NLDLY:
-                    flags.addAll(getFlag(flag, OutputFlags.getNewLineDelayFlags()));
+                    flags.addAll(getOutputFlagFromSubSet(flag, OutputFlags.getNewLineDelayFlags()));
                     break;
                 case CRDLY:
-                    flags.addAll(getFlag(flag, OutputFlags.getCarriageReturnDelayFlags()));
+                    flags.addAll(getOutputFlagFromSubSet(flag, OutputFlags.getCarriageReturnDelayFlags()));
                     break;
                 case TABDLY:
-                    flags.addAll(getFlag(flag, OutputFlags.getHorizontalTabDelayFlags()));
+                    flags.addAll(getOutputFlagFromSubSet(flag, OutputFlags.getHorizontalTabDelayFlags()));
                     break;
                 case BSDLY:
-                    flags.addAll(getFlag(flag, OutputFlags.getBackspaceDelayFlags()));
+                    flags.addAll(getOutputFlagFromSubSet(flag, OutputFlags.getBackspaceDelayFlags()));
                     break;
                 case FFDLY:
-                    flags.addAll(getFlag(flag, OutputFlags.getFormFeedDelayFlags()));
+                    flags.addAll(getOutputFlagFromSubSet(flag, OutputFlags.getFormFeedDelayFlags()));
                     break;
                 case VTDLY:
-                    flags.addAll(getFlag(flag, OutputFlags.getVerticalTabDelayFlags()));
+                    flags.addAll(getOutputFlagFromSubSet(flag, OutputFlags.getVerticalTabDelayFlags()));
                     break;
                 case OCRNL:
                 case OPOST:
@@ -194,19 +195,17 @@ public class TermIOS {
     public EnumSet<ControlFlags> getControlFlagsEnumSet(){
         Set<ControlFlags> flags = new HashSet<ControlFlags>();
         for (ControlFlags cfg : ControlFlags.values()){
-            int value = cfg.getValue();
-            int flag = 0;
+            int flag = c_cflag & cfg.getValue();
             switch (cfg){
                 case CBAUD:
-                    flag = c_cflag & cfg.getValue();
                     for (ControlFlags baud : ControlFlags.getBaudRates()){
                         if (flag  == baud.getValue()){
                             flags.add(baud);
+                            break;
                         }
                     }
                     break;
                 case CSIZE:
-                    flag = c_cflag & cfg.getValue();
                     for (ControlFlags cSizes : ControlFlags.getCharacterSizes()){
                         if (flag == cSizes.getValue()){
                             flags.add(cSizes);
@@ -221,7 +220,7 @@ public class TermIOS {
                 case HUPCL:
                 case CLOCAL:
                 case CRTSCTS:
-                    if ((c_cflag & cfg.getValue()) == cfg.getValue()){
+                    if (flag == cfg.getValue()){
                         flags.add(cfg);
                     }
                     break;                        
