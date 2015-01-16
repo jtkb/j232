@@ -171,17 +171,6 @@ public class TermIOS {
                                     EnumSet.copyOf(flags);
     }
     
-    /**
-     * Adds an EnumSet of OutputFlags 
-     * @param flags
-     * @return TRUE if the flags specified were not already set, FALSE otherwise.
-     */
-    public boolean addOutputFlagsEnumSet(EnumSet<OutputFlags> flags){
-        EnumSet<OutputFlags> currentflags = getOutputFlagsEnumSet();
-        boolean result = currentflags.addAll(flags);
-        setOutputFlags(currentflags);
-        return result;
-    }
     
     /**
      * Returns an integer of the OR-ed output flags set in this TermIOS class.
