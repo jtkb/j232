@@ -20,6 +20,7 @@ package com.javatechnics.rs232.struct;
 
 import com.javatechnics.rs232.flags.ControlFlags;
 import com.javatechnics.rs232.flags.InputFlags;
+import com.javatechnics.rs232.flags.LocalFlags;
 import com.javatechnics.rs232.flags.OutputFlags;
 import java.util.EnumSet;
 import org.junit.After;
@@ -152,6 +153,27 @@ public class TermIOSTest {
                     ControlFlags.CLOCAL,
                     ControlFlags.CRTSCTS)),
                 ControlFlags.getBaudRates());
+        System.out.print("passed.\n");
+    }
+    
+    @Test
+    public void testGetLocalFlags(){
+        System.out.print("Testing the getting of local flags...");
+        TermIOS termios = new TermIOS();
+        assertEquals("Retrieving local flags as int failed.", 0, termios.getLocalFlags());
+        assertEquals("Retrieving local flags as Enumset failed.", EnumSet.noneOf(LocalFlags.class), termios.getLocalFlagsEnumSet());
+        System.out.print("passed.\n");
+    }
+    
+    @Test
+    public void testSettingLocalFlags(){
+        System.out.print("Testing setting of the LocalFlags...");
+        EnumSet<LocalFlags> flags = EnumSet.of(LocalFlags.ECHOCTL,
+                                                LocalFlags.FLUSHO,
+                                                LocalFlags.NOFLSH);
+        TermIOS termios = new TermIOS();
+        termios.setLocalFlagsEnumSet(flags);
+        assertEquals("LocalFlags do not match.", flags, termios.getLocalFlagsEnumSet());
         System.out.print("passed.\n");
     }
 }

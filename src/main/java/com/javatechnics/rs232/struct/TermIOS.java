@@ -21,6 +21,7 @@ package com.javatechnics.rs232.struct;
 import com.javatechnics.rs232.EnumValue;
 import com.javatechnics.rs232.flags.ControlFlags;
 import com.javatechnics.rs232.flags.InputFlags;
+import com.javatechnics.rs232.flags.LocalFlags;
 import com.javatechnics.rs232.flags.OutputFlags;
 import com.javatechnics.rs232.utility.BitOperation;
 import java.util.EnumSet;
@@ -44,11 +45,11 @@ public class TermIOS {
     /**
      * Control flags.
      */
-    public int c_cflag = 0;
+    private int c_cflag = 0;
     /**
      * Local/line line flags.
      */
-    public int c_lflag = 0;
+    private int c_lflag = 0;
     
     public final int c_ccArraySize = 32;
     /**
@@ -226,6 +227,40 @@ public class TermIOS {
                     break;                        
             }
         }
-        return flags.isEmpty() ? EnumSet.noneOf(ControlFlags.class) : EnumSet.copyOf(flags);
+        return flags.isEmpty() ? EnumSet.noneOf(ControlFlags.class) : 
+                                    EnumSet.copyOf(flags);
+    }
+    
+    /**
+     * gets the int OR-ed value of the Local Flags set in this TermIOS instance.
+     * @return an int value of the flags.
+     */
+    public int getLocalFlags(){
+        return c_lflag;
+    }
+    
+    /**
+     * Sets the Local flags into this instance of TermIOS. The flags mimic
+     * those found within the termios struct in termios.h.
+     * @param flags the LocalFlags to set.
+     */
+    public void setLocalFlagsEnumSet(EnumSet<LocalFlags> flags){
+        c_lflag = BitOperation.orValues(flags);
+    }
+    
+    /**
+     * Gets the current Local flags set in this TermIOS instance as an
+     * EnumSet<LocalFlags>.
+     * @return an EnumSet<Localflags>
+     */
+    public EnumSet<LocalFlags> getLocalFlagsEnumSet(){
+        Set<LocalFlags> flags = new HashSet<LocalFlags>();
+        for (LocalFlags lfg : LocalFlags.values()){
+            if((c_lflag & lfg.getValue()) == lfg.getValue()){
+                flags.add(lfg);
+            }
+        }
+        return flags.isEmpty() ? EnumSet.noneOf(LocalFlags.class) : 
+                                    EnumSet.copyOf(flags);
     }
 }
