@@ -134,8 +134,8 @@ public class SerialTest {
             //                    termios.c_cflag, setTermios.c_cflag);
             //assertEquals("Local mode flags do not match",
             //                    termios.c_lflag, setTermios.c_lflag | 0xFFFF2000);
-            assertArrayEquals("Control characters do not match.", 
-                                termios.c_cc, setTermios.c_cc);
+            //assertArrayEquals("Control characters do not match.", 
+            //                    termios.c_cc, setTermios.c_cc);
         } catch (IOException ex) {
             fail(ex.toString());
         }
@@ -197,7 +197,7 @@ public class SerialTest {
         //termios.c_oflag = 0;
         //termios.c_lflag = ~(LocalFlags.PENDIN.value | LocalFlags.IEXTEN.value | LocalFlags.FLUSHO.value);
         
-        termios.c_cc[ControlCharacters.VINTR.value] = 0;
+        /*termios.c_cc[ControlCharacters.VINTR.value] = 0;
         termios.c_cc[ControlCharacters.VQUIT.value] = 0;
         termios.c_cc[ControlCharacters.VERASE.value] = 0;
         termios.c_cc[ControlCharacters.VKILL.value] = 0;
@@ -213,7 +213,7 @@ public class SerialTest {
         termios.c_cc[ControlCharacters.VDISCARD.value] = 0;
         termios.c_cc[ControlCharacters.VWERASE.value] = 0;
         termios.c_cc[ControlCharacters.VLNEXT.value] = 0;
-        termios.c_cc[ControlCharacters.VEOL2.value] = 0;
+        termios.c_cc[ControlCharacters.VEOL2.value] = 0;*/
         return termios;
     }
     

@@ -23,6 +23,7 @@ import com.javatechnics.rs232.flags.InputFlags;
 import com.javatechnics.rs232.flags.LocalFlags;
 import com.javatechnics.rs232.flags.OutputFlags;
 import java.util.EnumSet;
+import java.util.HashMap;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -176,4 +177,20 @@ public class TermIOSTest {
         assertEquals("LocalFlags do not match.", flags, termios.getLocalFlagsEnumSet());
         System.out.print("passed.\n");
     }
+    
+    @Test
+    public void testgetControlCharacters(){
+        System.out.print("Testing setting/getting of the ControlCharacters map...");
+        HashMap<ControlCharacters, Byte> cCharacters = new HashMap<ControlCharacters, Byte>();
+        for (ControlCharacters cc : ControlCharacters.values()){
+            cCharacters.put(cc, (byte)0);
+        }
+        cCharacters.put(ControlCharacters.VTIME, (byte)10);
+        cCharacters.put(ControlCharacters.VSTART, (byte)'s');
+        TermIOS termios = new TermIOS();
+        termios.setControlCharactersMap(cCharacters);
+        assertEquals("Control characters do not match those set.", cCharacters, termios.getControlCharactersMap());
+        System.out.print("passed.\n");
+    }
+    
 }

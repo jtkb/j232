@@ -18,14 +18,15 @@
  */
 package com.javatechnics.rs232.struct;
 
-import com.javatechnics.rs232.EnumValue;
 import com.javatechnics.rs232.flags.ControlFlags;
 import com.javatechnics.rs232.flags.InputFlags;
 import com.javatechnics.rs232.flags.LocalFlags;
 import com.javatechnics.rs232.flags.OutputFlags;
 import com.javatechnics.rs232.utility.BitOperation;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -47,15 +48,17 @@ public class TermIOS {
      */
     private int c_cflag = 0;
     /**
-     * Local/line line flags.
+     * Local flags.
      */
     private int c_lflag = 0;
-    
-    public final int c_ccArraySize = 32;
+    /**
+     * The size of the control character array.
+     */
+    public final int c_ccArraySize = ControlCharacters.values().length;
     /**
      * Control character flags.
      */
-    public byte[] c_cc = new byte[c_ccArraySize]; //32 matches termios array size
+    private byte[] c_cc = new byte[c_ccArraySize];
     
     /**
      * Sets the desired input flags of this TermIOS class. The flags mimic
@@ -185,13 +188,17 @@ public class TermIOS {
         return c_oflag;
     }
     
+    /**
+     * Sets the ControlFlags to be used by this instance of TermIOS.
+     * @param flags an EnumSet<ControlFlags>
+     */
     public void setControlFlags(EnumSet<ControlFlags> flags){
         c_cflag = BitOperation.orValues(flags);
     }
     
     /**
-     * Returns the 
-     * @return 
+     * Returns the current ControlFlags as an EnumSet<ControlFlags>
+     * @return an EnumSet<ControlFlags>.
      */
     public EnumSet<ControlFlags> getControlFlagsEnumSet(){
         Set<ControlFlags> flags = new HashSet<ControlFlags>();
@@ -232,7 +239,7 @@ public class TermIOS {
     }
     
     /**
-     * gets the int OR-ed value of the Local Flags set in this TermIOS instance.
+     * Gets the int OR-ed value of the Local Flags set in this TermIOS instance.
      * @return an int value of the flags.
      */
     public int getLocalFlags(){
@@ -263,4 +270,40 @@ public class TermIOS {
         return flags.isEmpty() ? EnumSet.noneOf(LocalFlags.class) : 
                                     EnumSet.copyOf(flags);
     }
+    
+    /**
+     * Returns the control characters set in this instance.
+     * @return and array of bytes containing the control characters.
+     */
+    public byte [] getControlCharacters(){
+        return c_cc;
+    }
+    
+    /**
+     * Gets the Control characters for this instance in the form of a Map.
+     * @return a of Map<ControlCharacters, Byte> containing the current control
+     * characters.
+     */
+    public Map<ControlCharacters,Byte> getControlCharactersMap(){
+        HashMap<ControlCharacters, Byte> ccMap = new HashMap<ControlCharacters, Byte>();
+        for (ControlCharacters cc : ControlCharacters.values()){
+            ccMap.put(cc, c_cc[cc.getValue()]);
+        }
+        return ccMap;
+    }
+    
+    /**
+     * Sets the Control characters of this instance.
+     * @param controlCharacters a Map<Controlcharacters, Byte> to set into this
+     * instance.
+     */
+    public void setControlCharactersMap(Map<ControlCharacters, Byte> controlCharacters){
+        byte[] cc = new byte[ControlCharacters.values().length];
+        for (Map.Entry<ControlCharacters, Byte> entry : controlCharacters.entrySet()){
+            cc[entry.getKey().getValue()] = entry.getValue();
+        }
+        c_cc = cc;
+    }
+    
+    
 }
