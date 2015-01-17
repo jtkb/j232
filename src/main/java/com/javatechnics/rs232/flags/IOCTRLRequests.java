@@ -25,13 +25,33 @@ package com.javatechnics.rs232.flags;
  * Instead the native JNI function transforms these values (which are known and 
  * under our control) to those found in the native header files.
  * For further information on the native functions relevant to this Enum, see
- * man tty_ioctl.
+ * man tty_ioctl. These Javadocs are based upon release 3.54 of the Linux 
+ * man-pages project.  A description of the project, and information about 
+ * reporting bugs, can be found at http://www.kernel.org/doc/man-pages/.
  * @author Kerry Billingham <java@avionicengineers.com>
  */
 public enum IOCTRLRequests {
+    /**
+     * Equivalent to tcgetattr(fd, argp).
+     * Get the current serial port settings.
+     */
     TCGETS	(0x5401),
+    /**
+     * Equivalent to tcsetattr(fd, TCSANOW, argp).
+     * Set the current serial port settings.
+     */
     TCSETS	(0x5402),
+    /**
+     * Equivalent to tcsetattr(fd, TCSADRAIN, argp).
+     * Allow the output buffer to drain, and set the current serial port 
+     * settings.
+     */
     TCSETSW	(0x5403),
+    /**
+     * Equivalent to tcsetattr(fd, TCSAFLUSH, argp).
+     * Allow the output buffer to drain, discard pending input, and set 
+     * the current serial port settings.
+     */
     TCSETSF	(0x5404),
     TCGETA	(0x5405),
     TCSETA	(0x5406),
@@ -40,7 +60,13 @@ public enum IOCTRLRequests {
     TCSBRK	(0x5409),
     TCXONC	(0x540A),
     TCFLSH	(0x540B),
+    /**
+     * Get the status of the modem bits.
+     */
     TIOCMGET	(0x5415),
+    /**
+     * Set the status of the modem bits.
+     */
     TIOCMSET	(0x5418),
     TIOCGSOFTCAR    (0x5419),
     TIOCSSOFTCAR    (0x541A),
