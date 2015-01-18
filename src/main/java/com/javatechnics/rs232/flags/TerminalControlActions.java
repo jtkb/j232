@@ -18,12 +18,14 @@
  */
 package com.javatechnics.rs232.flags;
 
+import com.javatechnics.rs232.EnumValue;
+
 /**
  * This enumeration reflects the native control parameters passed to tcsetattr().
  * Refer to termios.h.
  * @author Kerry Billingham <java@avionicengineers.com>
  */
-public enum TerminalControlActions {
+public enum TerminalControlActions implements EnumValue {
     /**
      * The change occurs immediately.
      */
@@ -44,5 +46,9 @@ public enum TerminalControlActions {
     
     TerminalControlActions(int value){
         this.value = value;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

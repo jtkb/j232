@@ -23,6 +23,7 @@ import com.javatechnics.rs232.flags.IOCTRLRequests;
 import com.javatechnics.rs232.flags.InputFlags;
 import com.javatechnics.rs232.flags.OpenFlags;
 import com.javatechnics.rs232.flags.QueueSelector;
+import com.javatechnics.rs232.flags.TerminalControlActions;
 import com.javatechnics.rs232.stream.SerialPortDataInputStream;
 import com.javatechnics.rs232.stream.SerialPortDataOutputStream;
 import java.io.Closeable;
@@ -306,11 +307,11 @@ public class Serial implements Closeable, Openable {
      * @return 0 upon success, -1 if an error occurred in the native code
      * @throws IOException 
      */
-    public int setTerminalAttributes(int terminalControlAction, TermIOS termios)
+    public int setTerminalAttributes(TerminalControlActions terminalControlAction, TermIOS termios)
             throws IOException {
         if (termios == null) throw new IOException("TermIOS structure is null.");
         return setNativeTerminalAttributes(fileDescriptor, 
-                terminalControlAction, 
+                terminalControlAction.getValue(), 
                 termios);
     }
     

@@ -38,7 +38,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-Activator>com.javatechnics.rs232.Activator</Bundle-Activator>
-                        <Export-Package>com.javatechnics.rs232,com.javatechnics.rs232.flags,com.javatechnics.rs232.struct</Export-Package>
+                        <Export-Package>com.javatechnics.rs232,com.javatechnics.rs232.flags,com.javatechnics.rs232.struct,com.javatechnics.rs232.utility</Export-Package>
                         <Private-Package>com.javatechnics.rs232.*</Private-Package>
                     </instructions>
                 </configuration>

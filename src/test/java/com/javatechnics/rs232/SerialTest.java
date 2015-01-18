@@ -122,7 +122,7 @@ public class SerialTest {
             EnumSet<InputFlags> inputFlags = EnumSet.of(InputFlags.ICRNL);
             termios.setInputFlags(inputFlags);
             //printMessage("termios.c_lflag = " + termios.c_lflag);
-            serial.setTerminalAttributes(TerminalControlActions.TCSANOW.value, termios);
+            serial.setTerminalAttributes(TerminalControlActions.TCSANOW, termios);
             System.out.println("Terminal Control attributes set.");
             TermIOS setTermios = serial.getTerminalAttributes();
             
