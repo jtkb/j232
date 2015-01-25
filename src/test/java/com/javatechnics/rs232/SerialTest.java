@@ -16,18 +16,13 @@
 package com.javatechnics.rs232;
 
 import com.javatechnics.rs232.struct.TermIOS;
-import com.javatechnics.rs232.struct.ControlCharacters;
 import com.javatechnics.rs232.flags.TerminalControlActions;
 import com.javatechnics.rs232.flags.OpenFlags;
 import com.javatechnics.rs232.flags.InputFlags;
 import com.javatechnics.rs232.flags.ModemControlFlags;
-import com.javatechnics.rs232.flags.LocalFlags;
-import com.javatechnics.rs232.flags.ControlFlags;
 import com.javatechnics.rs232.flags.QueueSelector;
 import java.io.IOException;
 import java.util.EnumSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -52,7 +47,7 @@ public class SerialTest {
     public SerialTest() {
     }
     
-    @BeforeClass
+    @BeforeClass @Ignore
     public static void setUpClass() {
         // Test 1.1 - Test for java.lang.UnsatifiedLinkError when Serial object
         // is created
@@ -141,20 +136,23 @@ public class SerialTest {
         }
     }
     
-    @Test @ Ignore
+    @Test
     public void testModemControlBits(){
-        printMessage("Testing the setting and getting of the Modem control bits.");
-        int preTestModemControlBits = 0;
-        int modemControlBitsToSet = 0;
+        System.out.print("Testing the setting and getting of the Modem control bits....");
+        EnumSet<ModemControlFlags> preTestModemControlBits;
+        EnumSet<ModemControlFlags> modemControlBitsToSet = EnumSet.of(ModemControlFlags.TIOCM_RTS);
+        Serial s = new Serial();
         try {
             preTestModemControlBits = serial.getModemControlBits();
-            /*modemControlBitsToSet = preTestModemControlBits & ~ModemControlFlags.TIOCM_RTS.value;
-            modemControlBitsToSet &= ~ModemControlFlags.TIOCM_DTR.value;
-            printMessage("Pre-test modem control bits :" + preTestModemControlBits);
-            printMessage("Modem control bits to set: " +  modemControlBitsToSet);
-            serial.setModemControlbits(modemControlBitsToSet);
-            assertEquals("Unable to set modem control bits.", modemControlBitsToSet, serial.getModemControlBits() & 0x0E1FF);
-            printMessage("Post-test modem control bits: " + serial.getModemControlBits());*/
+            if (preTestModemControlBits.equals(modemControlBitsToSet)){
+                modemControlBitsToSet.add(ModemControlFlags.TIOCM_LE);
+            }
+            s.open("/dev/ttyS0",EnumSet.of(OpenFlags.O_NONBLOCK, OpenFlags.O_RDWR));
+            assertEquals("Could not set Modem Control flags.", 0, s.setModemControlbits(modemControlBitsToSet));
+            assertEquals("Modem control bits read back do not match those set.", modemControlBitsToSet, s.getModemControlBits());
+            assertEquals("Could not set original Modem Control Bits.", 0, s.setModemControlbits(preTestModemControlBits));
+            assertEquals("The original Modem control Bits are not set", preTestModemControlBits, s.getModemControlBits());
+            System.out.print("passed.\r\n");
         } catch (IOException ex) {
             fail("Testing Modem control bits failed: " + ex);
         }

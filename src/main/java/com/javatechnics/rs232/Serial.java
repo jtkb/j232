@@ -20,17 +20,19 @@ package com.javatechnics.rs232;
 
 import com.javatechnics.rs232.struct.TermIOS;
 import com.javatechnics.rs232.flags.IOCTRLRequests;
-import com.javatechnics.rs232.flags.InputFlags;
+import com.javatechnics.rs232.flags.ModemControlFlags;
 import com.javatechnics.rs232.flags.OpenFlags;
 import com.javatechnics.rs232.flags.QueueSelector;
 import com.javatechnics.rs232.flags.TerminalControlActions;
 import com.javatechnics.rs232.stream.SerialPortDataInputStream;
 import com.javatechnics.rs232.stream.SerialPortDataOutputStream;
+import com.javatechnics.rs232.utility.BitOperation;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
@@ -277,24 +279,33 @@ public class Serial implements Closeable, Openable {
      * thrown.
      * @throws IOException 
      */
-    public int getModemControlBits() throws IOException{
-        return getNativeModemControlBits(fileDescriptor, 
+    public EnumSet<ModemControlFlags> getModemControlBits() throws IOException{
+        Set<ModemControlFlags> enumFlags = new HashSet<ModemControlFlags>();
+        int flags = getNativeModemControlBits(fileDescriptor, 
                                         IOCTRLRequests.TIOCMGET.value);
+        for (ModemControlFlags mcf : ModemControlFlags.values()){
+            if ((mcf.getValue() & flags) == mcf.getValue()){
+                enumFlags.add(mcf);
+            }
+        }
+        return enumFlags.isEmpty() ? EnumSet.noneOf(ModemControlFlags.class) :
+                                        EnumSet.copyOf(enumFlags);
     }
     
-    //TODO: Instead of using an int of flags, use an array of the enums. This
-    // way it ensured the correct values are used. Currently is is possible
-    // to set incorrect values so this may have unexpected results.
     /**
      * Call this method to set the control bits on the underlying serial port.
      * This is a non-POSIX compliant call through to ioctl().
-     * @param controlBits flags indicating the desired bits to be set. Use
-     * {@link com.javatechnics.rs232.IOCTRLRequests} Enum to OR values.
-     * @return 0 upon success, -1 if an error and an exception not thrown.
-     * @throws IOException thrown if an error occurs.
+     * @param flags and EnumSet of 
+     * {@link com.javatechnics.rs232.flags.ModemControlFlags} indicating which
+     * control line to set.
+     * @return 0 upon success, -1 if an error occurred and an exception not
+     * thrown.
+     * @throws IOException if an error occurs.
      */
-    public int setModemControlbits(int controlBits) throws IOException{
-        return setNativeModemcontrolBits(fileDescriptor, controlBits);
+    public int setModemControlbits(EnumSet<ModemControlFlags> flags) throws IOException{
+        
+        return setNativeModemcontrolBits(fileDescriptor, 
+                BitOperation.orValues(flags));
     }
     
     /**
@@ -326,6 +337,14 @@ public class Serial implements Closeable, Openable {
         return getNativeTerminalAttributes(fileDescriptor);
     }
     
+    /**
+     * Call this method to flush the input, output or both data queues.
+     * @param queueSelector one of 
+     * {@link com.javatechnics.rs232.flags.QueueSelector}
+     * @return 0 upon success, -1 if an error occurred and IOException not
+     * thrown.
+     * @throws IOException if an error occurs.
+     */
     public int flushQueue(QueueSelector queueSelector) throws IOException{
         return nativeTCFlush(fileDescriptor, queueSelector.value);
     }
