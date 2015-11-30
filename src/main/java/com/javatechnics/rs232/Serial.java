@@ -177,12 +177,12 @@ public class Serial implements Closeable, Openable {
      * @return a single int that represents the OR-ed values within the specified
      * set.
      */
+    @Deprecated()
     public  static <T extends EnumValue> int orValues(Set<T> flags){
         int f = 0;
-        Iterator<T> it = flags.iterator();
-        while (it.hasNext()) {
-            f |= it.next().getValue();
-        }
+        for (EnumValue ev : flags)
+            f |= ev.getValue();
+        
         return f;
     }
 
