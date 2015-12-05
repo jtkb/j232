@@ -31,24 +31,12 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.7</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-Activator>com.javatechnics.rs232.Activator</Bundle-Activator>
-                        <Export-Package>com.javatechnics.rs232,com.javatechnics.rs232.flags,com.javatechnics.rs232.struct,com.javatechnics.rs232.utility</Export-Package>
-                        <Private-Package>com.javatechnics.rs232.*</Private-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>com.github.maven-nar</groupId>
                 <artifactId>nar-maven-plugin</artifactId>
                 <version>3.2.3</version>
                 <extensions>true</extensions>
                 <configuration>
+                    <output>j232</output>
                     <libraries>
                         <library>
                             <type>jni</type>
@@ -63,7 +51,38 @@
                         </includePaths>
                     </c>
                 </configuration>
-                
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.7</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>default-bundle-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
+                        <configuration>
+                            <bundleFileName>bundle.jar</bundleFileName>
+                            <supportedProjectTypes>
+                                <supportedProjectType>jar</supportedProjectType>
+                                <supportedProjectType>bundle</supportedProjectType>
+                                <supportedProjectType>nar</supportedProjectType>
+                            </supportedProjectTypes>
+                            <instructions>
+                                <Bundle-Activator>com.javatechnics.rs232.Activator</Bundle-Activator>
+                                <Export-Package>com.javatechnics.rs232,com.javatechnics.rs232.flags,com.javatechnics.rs232.struct,com.javatechnics.rs232.utility</Export-Package>
+                                <Private-Package>com.javatechnics.rs232.*</Private-Package>
+                                <!--<Include-Resource>target/nar/j232-1.0-SNAPSHOT-amd64-Linux-gpp-jni/lib/amd64-Linux-gpp/jni/libj232.so</Include-Resource>-->
+                                <Include-Resource>target/nar/${project.artifactId}-${project.version}-${nar.aol}-jni/lib/${nar.aol}/jni/libj232.so</Include-Resource>
+                                <!--<Include-Resource>${basedir}/native/libj232.so</Include-Resource>-->
+                                <Bundle-NativeCode>libj232.so;osname=linux;processor=x86_64</Bundle-NativeCode>
+                            </instructions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
