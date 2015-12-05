@@ -7,7 +7,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>j232</module>
-    </modules>
+    <module>j232-karaf-command</module>
+  </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
