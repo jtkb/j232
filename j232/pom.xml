@@ -84,6 +84,20 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.javatechnics</groupId>
+                <artifactId>file-renamer</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <id>file-renamer</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>rename</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
