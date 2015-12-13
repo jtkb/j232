@@ -8,6 +8,7 @@
     <modules>
         <module>j232</module>
     <module>j232-karaf-command</module>
+    <module>SerialPortManager</module>
   </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
