@@ -16,8 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.javatechnics.rs232;
+package com.javatechnics.rs232.port;
 
+import com.javatechnics.rs232.*;
 import com.javatechnics.rs232.struct.TermIOS;
 import com.javatechnics.rs232.flags.IOCTRLRequests;
 import com.javatechnics.rs232.flags.ModemControlFlags;
@@ -41,8 +42,11 @@ import java.util.logging.Logger;
  *
  * @author Kerry Billingham <java@avionicengineers.com>.
  */
-@Deprecated
-public class Serial implements Closeable, Openable {
+public abstract class Serial implements Closeable, Openable {
+    /**
+     * This holds the name of the serial port. Example /dev/ttyS0
+     */
+    private String serialPortName = null;
     /**
      * This holds the native file descriptor returned from openSerialPort().
      */
@@ -239,6 +243,7 @@ public class Serial implements Closeable, Openable {
         if (return_value == -1) throw new IOException("");
         serialPortDataInputStream = null;
         portOpen = false;
+        serialPortName = null;
         fileDescriptor = -1;    // Restore FD to -1
     }
 
