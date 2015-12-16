@@ -354,6 +354,7 @@ public abstract class Serial implements Closeable, Openable {
         return nativeTCFlush(fileDescriptor, queueSelector.value);
     }
     
+    
     @Override
     protected void finalize(){
         System.out.println("Finalize() method called.");
@@ -363,4 +364,17 @@ public abstract class Serial implements Closeable, Openable {
             Logger.getLogger(Serial.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    /*
+    Getters and setters beyond here.
+    */
+
+    /**
+     * Serial port name.
+     * @return the name of the serial port e.g. /dev/ttyS0
+     */
+    public String getSerialPortName() {
+        return serialPortName;
+    }
+    
 }
