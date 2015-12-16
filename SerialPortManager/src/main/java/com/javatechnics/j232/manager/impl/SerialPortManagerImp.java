@@ -19,17 +19,26 @@ package com.javatechnics.j232.manager.impl;
 import com.javatechnics.j232.manager.SerialPortManager;
 import com.javatechnics.j232.manager.exception.NoSuchPort;
 import com.javatechnics.j232.manager.exception.PortNotAvailable;
-import com.javatechnics.rs232.Serial;
+import com.javatechnics.rs232.flags.OpenFlags;
+import com.javatechnics.rs232.port.Serial;
+import com.javatechnics.rs232.port.impl.SerialImpl;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SerialPortManagerImp implements SerialPortManager {
     
     private final Map<String, WeakReference<Serial>> serialPortsInUse = Collections.synchronizedMap( new 
             HashMap<String, WeakReference<Serial>>());
+    private ReentrantLock portlLock = new ReentrantLock();
 
     public List<String> listSerialPorts() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -51,8 +60,32 @@ public class SerialPortManagerImp implements SerialPortManager {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public Serial obtainSerialPort(String device) throws PortNotAvailable, NoSuchPort {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Serial obtainSerialPort(String device) throws PortNotAvailable, IOException {
+        return obtainSerialPort(device, EnumSet.noneOf(OpenFlags.class));
+    }
+
+    public Serial obtainSerialPort(String device, EnumSet<OpenFlags> openFlags) throws PortNotAvailable, IOException {
+        Serial serial = null;
+        try {
+            if ( ! portlLock.tryLock(3, TimeUnit.SECONDS)) throw new 
+                PortNotAvailable("Cannot obtain lock while attempting to obtain serial port."); 
+            synchronized (serialPortsInUse){
+                if (serialPortsInUse.containsKey(device)){
+                    if ( ! serialPortsInUse.get(device).isEnqueued()){
+                        throw new PortNotAvailable("Port " + device + " already in use.");
+                    }
+                }
+                serial = new SerialImpl();
+                serial.open(device, openFlags);
+                serialPortsInUse.put(device, new WeakReference<Serial>(serial));
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SerialPortManagerImp.class.getName()).log(Level.SEVERE, null, ex);
+            throw new PortNotAvailable(ex.getLocalizedMessage());
+        } finally {
+            portlLock.unlock();
+        }
+        return serial;
     }
 
     public boolean releaseSerialPort(Serial serialPort) {

@@ -2,10 +2,32 @@ package com.javatechnics.j232.manager;
 
 import com.javatechnics.j232.manager.exception.NoSuchPort;
 import com.javatechnics.j232.manager.exception.PortNotAvailable;
-import com.javatechnics.rs232.Serial;
+import com.javatechnics.rs232.flags.OpenFlags;
+import com.javatechnics.rs232.port.Serial;
+import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
 
 public interface SerialPortManager {
+    
+    /**
+     * An Enum to provide some default serial port full paths found on Debian
+     * based Linuxes.
+     */
+    public static enum DefaultDebianPorts {
+        TTYSO ("/dev/ttyS0"),
+        TTYUSB0 ("/dev/ttyUSB0");
+        
+        private final String devicePath;
+        
+        DefaultDebianPorts (String devicePath){
+            this.devicePath = devicePath;
+        }
+        
+        public String getPath(){
+            return devicePath;
+        }
+    }
     
     /**
      * Obtain a list of current serial ports available. The returned list should
@@ -60,7 +82,19 @@ public interface SerialPortManager {
      * @throws NoSuchPort if the requested port is not available
      */
     public Serial obtainSerialPort(String device) throws PortNotAvailable,
-                                                        NoSuchPort;
+                                                        IOException;
+    
+    /**
+     * Open the specified serial port with the specified open flags.
+     * @param device the soecified serial port.
+     * @param openFlags the specified open flags
+     * @return 
+     * @throws PortNotAvailable if the requested port is not available, e.g
+     * in use.
+     * @throws NoSuchPort if the requested port is not available
+     */
+    public Serial obtainSerialPort(String device, EnumSet<OpenFlags> openFlags)
+            throws PortNotAvailable, IOException;
     
     /**
      * Release a specified Serial object. Once released the serial port becomes
