@@ -40,7 +40,7 @@
  * 
 */
 JNIEXPORT jint JNICALL
-Java_com_javatechnics_rs232_Serial_openSerialPort (JNIEnv * env, jobject obj, jstring path, jint flags){
+Java_com_javatechnics_rs232_port_Serial_openSerialPort (JNIEnv * env, jobject obj, jstring path, jint flags){
 	jint return_value = -1;
         int native_flags = get_real_flags(java_open_flags, open_flags, \
                                             flags, number_open_flags);
@@ -79,7 +79,7 @@ Java_com_javatechnics_rs232_Serial_openSerialPort (JNIEnv * env, jobject obj, js
  *                          failed AND IOException object could not be created.
  */
 JNIEXPORT jint JNICALL 
-Java_com_javatechnics_rs232_Serial_closeSerialPort (JNIEnv *env, jobject obj, jint fd){
+Java_com_javatechnics_rs232_port_Serial_closeSerialPort (JNIEnv *env, jobject obj, jint fd){
     jint return_value = -1;
     return_value = close(fd);
     if (return_value == -1){
@@ -108,7 +108,7 @@ Java_com_javatechnics_rs232_Serial_closeSerialPort (JNIEnv *env, jobject obj, ji
  *                              an exception could not be thrown.
  */
 JNIEXPORT jint JNICALL 
-Java_com_javatechnics_rs232_Serial_setNativeTerminalAttributes (JNIEnv *env,
+Java_com_javatechnics_rs232_port_Serial_setNativeTerminalAttributes (JNIEnv *env,
                                                                 jobject obj,
                                                                 jint file_descriptor,
                                                                 jint term_action, 
@@ -191,7 +191,7 @@ Java_com_javatechnics_rs232_Serial_setNativeTerminalAttributes (JNIEnv *env,
  * @throws IOException if an error occurs.
  */
 JNIEXPORT jobject JNICALL 
-Java_com_javatechnics_rs232_Serial_getNativeTerminalAttributes (JNIEnv *env, 
+Java_com_javatechnics_rs232_port_Serial_getNativeTerminalAttributes (JNIEnv *env, 
                                                                 jobject obj,
                                                                 jint fileDescriptor){
     jclass termiosClass;
@@ -292,7 +292,7 @@ Java_com_javatechnics_rs232_Serial_getNativeTerminalAttributes (JNIEnv *env,
  * @throws IOException if an error occurs.
  */
 JNIEXPORT jint JNICALL 
-Java_com_javatechnics_rs232_Serial_getNativeModemControlBits (JNIEnv * env,
+Java_com_javatechnics_rs232_port_Serial_getNativeModemControlBits (JNIEnv * env,
                                                     jobject jobj,
                                                     jint file_descriptor,
                                                     jint ioctl_request){
@@ -339,7 +339,7 @@ Java_com_javatechnics_rs232_Serial_getNativeModemControlBits (JNIEnv * env,
  * @throws IOException if an error occurs.
  */
 JNIEXPORT jint JNICALL
-Java_com_javatechnics_rs232_Serial_setNativeModemcontrolBits (JNIEnv * env,
+Java_com_javatechnics_rs232_port_Serial_setNativeModemcontrolBits (JNIEnv * env,
                                                     jobject jobj,
                                                     jint fileDescriptor,
                                                     jint flags){
@@ -366,7 +366,7 @@ Java_com_javatechnics_rs232_Serial_setNativeModemcontrolBits (JNIEnv * env,
  * @throws IOException if an error occurs.
  */
 JNIEXPORT jint JNICALL 
-Java_com_javatechnics_rs232_Serial_nativeTCFlush (JNIEnv * env, 
+Java_com_javatechnics_rs232_port_Serial_nativeTCFlush (JNIEnv * env, 
                                             jobject jobj, 
                                             jint fileDescriptor,
                                             jint queue_selector){
@@ -513,7 +513,7 @@ int get_native_value(const int const java_values[], const int const native_flags
 //############################################################################
 
 JNIEXPORT jint JNICALL 
-Java_com_javatechnics_rs232_Serial_nativeTestRead (JNIEnv *env, \
+Java_com_javatechnics_rs232_port_Serial_nativeTestRead (JNIEnv *env, \
                                                     jobject jobj, \
                                                     jint fd, \
                                                     jint flags){

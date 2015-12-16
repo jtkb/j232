@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <jni.h>
-#include "jni/com_javatechnics_rs232_Serial.h"
+#include "jni/com_javatechnics_rs232_port_Serial.h"
 
 #define VERSION "1.0.0"
 

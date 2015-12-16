@@ -29,7 +29,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <jni.h>
-#include "jni/com_javatechnics_rs232_Serial.h"
+#include "jni/com_javatechnics_rs232_port_Serial.h"
 #ifdef DEBUG
 #include <syslog.h>
 #endif
