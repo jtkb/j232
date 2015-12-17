@@ -6,6 +6,7 @@
 package com.javatechnics.j232.manager.impl;
 
 import com.javatechnics.j232.manager.SerialPortManager;
+import com.javatechnics.j232.manager.exception.PortNotAvailable;
 import com.javatechnics.rs232.port.Serial;
 import java.util.List;
 import org.junit.After;
@@ -118,9 +119,36 @@ public class SerialPortManagerImpTest {
         System.out.println("obtainSerialPort");
         String device = SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath();
         SerialPortManagerImp instance = new SerialPortManagerImp();
+        Serial serial1 = instance.obtainSerialPort(device);
         assertNotNull("Could not obtain " + SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath(),
-                instance.obtainSerialPort(device));
+                serial1);
         System.out.println("Successfully obtained " + SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath());
+        try {
+            String device2 = SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath();
+            Serial serial2 = instance.obtainSerialPort(device2);
+            fail("I was able to obtain a second instance of " + 
+                    SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath());
+        } catch (PortNotAvailable ex){
+            System.out.println("Successfully denied obtaining second instance of " + 
+                    SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath());
+        }
+        
+        serial1 = null;
+        try {
+            System.out.println("Sleeping to allow gargabe collection (hopefully)");
+            //Thread.sleep(5000);
+            System.gc();
+            Thread.sleep(1000);
+            String device2 = SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath();
+            Serial serial2 = instance.obtainSerialPort(device2);
+            System.out.println("Successfully obtained the instance of " + 
+                    SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath());
+        } catch (PortNotAvailable ex){
+             fail("I was unable to obtain the sole instance of " + 
+                    SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath());
+            
+        }
+        
     }
 
     /**
@@ -133,6 +161,7 @@ public class SerialPortManagerImpTest {
         SerialPortManagerImp instance = new SerialPortManagerImp();
         assertNotNull("Successfully obtained " + SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath(),
                 instance.obtainSerialPort(device));
+        
     }
     /**
      * Test of releaseSerialPort method, of class SerialPortManagerImp.
