@@ -48,7 +48,7 @@ public class SerialPortManagerImpTest {
     @Test @Ignore
     public void testListSerialPorts_0args() {
         System.out.println("listSerialPorts");
-        SerialPortManagerImp instance = new SerialPortManagerImp();
+        SerialPortManagerImp instance = SerialPortManagerImp.getInstance();
         List<String> expResult = null;
         List<String> result = instance.listSerialPorts();
         assertEquals(expResult, result);
@@ -63,7 +63,7 @@ public class SerialPortManagerImpTest {
     public void testListSerialPorts_SerialPortManagerPortTypes() {
         System.out.println("listSerialPorts");
         SerialPortManager.PortTypes portType = null;
-        SerialPortManagerImp instance = new SerialPortManagerImp();
+        SerialPortManagerImp instance = SerialPortManagerImp.getInstance();
         List<String> expResult = null;
         List<String> result = instance.listSerialPorts(portType);
         assertEquals(expResult, result);
@@ -77,7 +77,7 @@ public class SerialPortManagerImpTest {
     @Test @Ignore
     public void testGetPortPrefixes() {
         System.out.println("getPortPrefixes");
-        SerialPortManagerImp instance = new SerialPortManagerImp();
+        SerialPortManagerImp instance = SerialPortManagerImp.getInstance();
         List<String> expResult = null;
         List<String> result = instance.getPortPrefixes();
         assertEquals(expResult, result);
@@ -92,7 +92,7 @@ public class SerialPortManagerImpTest {
     public void testSetPortPrefixes() {
         System.out.println("setPortPrefixes");
         List<String> prefixes = null;
-        SerialPortManagerImp instance = new SerialPortManagerImp();
+        SerialPortManagerImp instance = SerialPortManagerImp.getInstance();
         instance.setPortPrefixes(prefixes);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -105,7 +105,7 @@ public class SerialPortManagerImpTest {
     public void testAppendPortPrefixes() {
         System.out.println("appendPortPrefixes");
         List<String> prefixes = null;
-        SerialPortManagerImp instance = new SerialPortManagerImp();
+        SerialPortManagerImp instance = SerialPortManagerImp.getInstance();
         instance.appendPortPrefixes(prefixes);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -118,7 +118,7 @@ public class SerialPortManagerImpTest {
     public void testObtainSerialPort() throws Exception {
         System.out.println("obtainSerialPort");
         String device = SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath();
-        SerialPortManagerImp instance = new SerialPortManagerImp();
+        SerialPortManagerImp instance = SerialPortManagerImp.getInstance();
         Serial serial1 = instance.obtainSerialPort(device);
         assertNotNull("Could not obtain " + SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath(),
                 serial1);
@@ -158,7 +158,7 @@ public class SerialPortManagerImpTest {
     public void testObtainSerialPort_2args() throws Exception {
         System.out.println("obtainSerialPort");
         String device = SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath();
-        SerialPortManagerImp instance = new SerialPortManagerImp();
+        SerialPortManagerImp instance = SerialPortManagerImp.getInstance();
         assertNotNull("Successfully obtained " + SerialPortManager.DefaultDebianPorts.TTYUSB0.getPath(),
                 instance.obtainSerialPort(device));
         
@@ -170,7 +170,7 @@ public class SerialPortManagerImpTest {
     public void testReleaseSerialPort() {
         System.out.println("releaseSerialPort");
         Serial serialPort = null;
-        SerialPortManagerImp instance = new SerialPortManagerImp();
+        SerialPortManagerImp instance = SerialPortManagerImp.getInstance();
         boolean expResult = false;
         boolean result = instance.releaseSerialPort(serialPort);
         assertEquals(expResult, result);

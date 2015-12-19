@@ -38,10 +38,21 @@ import java.util.logging.Logger;
  */
 public class SerialPortManagerImp implements SerialPortManager {
     
+    private static SerialPortManagerImp serialPortManagerImp = null;
     private final Map<Serial,String> serialPortsInUse = Collections.synchronizedMap( new 
             WeakHashMap<Serial, String>());
     private ReentrantLock portlLock = new ReentrantLock();
     private final ReferenceQueue<Serial> serialReferenceQueue = new ReferenceQueue<Serial>();
+    
+    private SerialPortManagerImp(){
+        
+    }
+    
+    public static final synchronized SerialPortManagerImp getInstance(){
+        return serialPortManagerImp == null ? 
+                serialPortManagerImp = new SerialPortManagerImp() : 
+                serialPortManagerImp;
+    }
 
     public List<String> listSerialPorts() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -63,17 +74,36 @@ public class SerialPortManagerImp implements SerialPortManager {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * Attempts to obtain the specified serial port. An attempt is made to obtain
+     * the specified device using an empty set of OpenFlags.
+     * @param device the full path string to the device to open.
+     * @return the Serial device if successful.
+     * @throws PortNotAvailable if the specified is already in use
+     * @throws IOException typically thrown from the native library e.g. if
+     * the specified port does not physically exist.
+     */
     public Serial obtainSerialPort(String device) throws PortNotAvailable, IOException {
         return obtainSerialPort(device, EnumSet.noneOf(OpenFlags.class));
     }
 
+    /**
+     * Attempts to obtain the specified serial port using the specified OpenFlags.
+     * @param device the full pathe string to the device to obtain.
+     * @param openFlags an EnumSet of OpenFlags to specify to the underlying 
+     * native library.
+     * @return the opened serial port.
+     * @throws PortNotAvailable if the specified port is not available.
+     * @throws IOException typically thrown if an exception occurs in the 
+     * underlying native library.
+     */
     public Serial obtainSerialPort(String device, EnumSet<OpenFlags> openFlags) throws PortNotAvailable, IOException {
         Serial serial = null;
-        try {
+         try {
             if ( ! portlLock.tryLock(3, TimeUnit.SECONDS)) throw new 
                 PortNotAvailable("Cannot obtain lock while attempting to obtain serial port."); 
             synchronized (serialPortsInUse){
-                if (serialPortsInUse.containsValue(device)){
+                 if (serialPortsInUse.containsValue(device)){
 //                    if ( ! serialPortsInUse.get(device).isEnqueued()){
                        throw new PortNotAvailable("Port " + device + " already in use.");
 //                    }
@@ -91,8 +121,16 @@ public class SerialPortManagerImp implements SerialPortManager {
         return serial;
     }
 
+    /**
+     * Release the specified serial port. Currently this does nothing as the 
+     * manager will only allow the serial port to be used if there are no further 
+     * strong references to it.
+     * @param serialPort
+     * @return always returns TRUE.
+     */
     public boolean releaseSerialPort(Serial serialPort) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // No operation.
+        return true;
     }
     
 }
