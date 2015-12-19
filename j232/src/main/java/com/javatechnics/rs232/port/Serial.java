@@ -356,13 +356,14 @@ public abstract class Serial implements Closeable, Openable {
     
     
     @Override
-    protected void finalize(){
+    protected void finalize() throws Throwable{
         System.out.println("Finalize() method called.");
         try {
+            super.finalize();
             closeSerialPort(fileDescriptor);
         } catch (IOException ex) {
             Logger.getLogger(Serial.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
     }
     
     /*
