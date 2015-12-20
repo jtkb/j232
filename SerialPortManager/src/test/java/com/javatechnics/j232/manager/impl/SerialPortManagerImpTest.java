@@ -8,6 +8,7 @@ package com.javatechnics.j232.manager.impl;
 import com.javatechnics.j232.manager.SerialPortManager;
 import com.javatechnics.j232.manager.exception.PortNotAvailable;
 import com.javatechnics.rs232.port.Serial;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -45,15 +46,17 @@ public class SerialPortManagerImpTest {
     /**
      * Test of listSerialPorts method, of class SerialPortManagerImp.
      */
-    @Test @Ignore
+    @Test
     public void testListSerialPorts_0args() {
         System.out.println("listSerialPorts");
         SerialPortManagerImp instance = SerialPortManagerImp.getInstance();
-        List<String> expResult = null;
+        List<String> expResult = Arrays.asList("/dev/ttyUSB0");
         List<String> result = instance.listSerialPorts();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        for (String port : result){
+            System.out.println("Serial port: " + port);
+        }
+        assertTrue("/dev/ttyUSB0 not in list of available ports",
+                result.containsAll(expResult));
     }
 
     /**
