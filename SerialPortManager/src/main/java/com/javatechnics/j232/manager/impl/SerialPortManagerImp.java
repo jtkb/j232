@@ -101,10 +101,12 @@ public class SerialPortManagerImp implements SerialPortManager {
      * @return a list of currently available serial ports. The list may be 
      * empty if no serial ports are installed the portType was NULL
      */
+    @Override
     public List<String> listSerialPorts() {
         return listSerialPorts(PortTypes.ALL);
     }
 
+    @Override
     public List<String> listSerialPorts(PortTypes portType) {
         List<String> ports = new ArrayList<String>();
         if (portType == null) return ports;
@@ -154,6 +156,7 @@ public class SerialPortManagerImp implements SerialPortManager {
      * attempt to modify the list will result in an UnsupportedOperationException.
      * @return an unmodifiable list of port prefixes in current use.
      */
+    @Override
     public List<String> getPortPrefixes() {
         return Collections.unmodifiableList(portPrefixes);
     }
@@ -162,6 +165,7 @@ public class SerialPortManagerImp implements SerialPortManager {
      * Sets the current list of serial port prefixes. This method it thread safe.
      * @param prefixes List of type String of serial port prefixes to use.
      */
+    @Override
     public void setPortPrefixes(List<String> prefixes) {
         try {
             if (prefixesLock.tryLock(3, TimeUnit.SECONDS)){
@@ -203,6 +207,7 @@ public class SerialPortManagerImp implements SerialPortManager {
      * @throws IOException typically thrown from the native library e.g. if
      * the specified port does not physically exist.
      */
+    @Override
     public Serial obtainSerialPort(String device) throws PortNotAvailable, IOException {
         return obtainSerialPort(device, EnumSet.noneOf(OpenFlags.class));
     }
@@ -217,6 +222,7 @@ public class SerialPortManagerImp implements SerialPortManager {
      * @throws IOException typically thrown if an exception occurs in the 
      * underlying native library.
      */
+    @Override
     public Serial obtainSerialPort(String device, EnumSet<OpenFlags> openFlags) throws PortNotAvailable, IOException {
         Serial serial = null;
          try {
@@ -248,6 +254,7 @@ public class SerialPortManagerImp implements SerialPortManager {
      * @param serialPort
      * @return always returns TRUE.
      */
+    @Override
     public boolean releaseSerialPort(Serial serialPort) {
         // No operation.
         return true;
@@ -257,6 +264,7 @@ public class SerialPortManagerImp implements SerialPortManager {
      * Resets the list of port prefixes to default values.
      * @return TRUE if successful. If false check logs.
      */
+    @Override
     public boolean resetPortPrefixesToDefault(){
         boolean success = false;
         try {
