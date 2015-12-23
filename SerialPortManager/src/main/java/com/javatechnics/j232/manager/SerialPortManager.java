@@ -45,6 +45,12 @@ public interface SerialPortManager {
     public List<String> listSerialPorts(PortTypes portType);
     
     /**
+     * Resets the list of port prefixes to the default values.
+     * @return TRUE if reset successful.
+     */
+    public boolean resetPortPrefixesToDefault();
+    
+    /**
      * Enum of types of serial port hardware. 
      * FIXED: Non-removable type e.g. on motherboard
      * USB: Removable type via USB ports

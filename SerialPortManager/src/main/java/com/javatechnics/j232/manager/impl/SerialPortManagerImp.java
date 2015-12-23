@@ -22,7 +22,6 @@ import com.javatechnics.rs232.flags.OpenFlags;
 import com.javatechnics.rs232.port.Serial;
 import com.javatechnics.rs232.port.impl.SerialImpl;
 import java.io.IOException;
-import java.lang.ref.ReferenceQueue;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -48,7 +47,7 @@ public class SerialPortManagerImp implements SerialPortManager {
     private final Map<Serial,String> serialPortsInUse = Collections.synchronizedMap( new 
             WeakHashMap<Serial, String>());
     private ReentrantLock portlLock = new ReentrantLock();
-    private final ReferenceQueue<Serial> serialReferenceQueue = new ReferenceQueue<Serial>();
+    private ReentrantLock prefixesLock = new ReentrantLock();
     
     /**
      * Immutable default serial port prefixes such as ttyS typically found on Debian
@@ -197,6 +196,25 @@ public class SerialPortManagerImp implements SerialPortManager {
     public boolean releaseSerialPort(Serial serialPort) {
         // No operation.
         return true;
+    }
+    
+    /**
+     * Resets the list of port prefixes to default values.
+     * @return TRUE if successful. If false check logs.
+     */
+    public boolean resetPortPrefixesToDefault(){
+        boolean success = false;
+        try {
+            if (prefixesLock.tryLock(3, TimeUnit.SECONDS)){
+                portPrefixes = Collections.synchronizedList(DEFAULT_PORT_PREFIXES);
+                success = true;
+}
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SerialPortManagerImp.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            prefixesLock.unlock();
+        }
+        return success;
     }
     
 }
