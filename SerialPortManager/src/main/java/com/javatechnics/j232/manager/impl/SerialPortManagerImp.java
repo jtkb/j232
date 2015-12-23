@@ -99,15 +99,43 @@ public class SerialPortManagerImp implements SerialPortManager {
      * manager. If an exception occurs whilst enumerating serial ports then
      * it is recorded in the logs and an empty list is returned.
      * @return a list of currently available serial ports. The list may be 
-     * empty if no serial ports are installed.
+     * empty if no serial ports are installed the portType was NULL
      */
     public List<String> listSerialPorts() {
+        return listSerialPorts(PortTypes.ALL);
+    }
+
+    public List<String> listSerialPorts(PortTypes portType) {
         List<String> ports = new ArrayList<String>();
+        if (portType == null) return ports;
         StringBuilder glob = new StringBuilder("{");
+        switch (portType){
+            case ALL:
+                try {
+                    if (prefixesLock.tryLock(3, TimeUnit.SECONDS)){
         for (String prefix : portPrefixes){
             glob.append(prefix).append("*,");
         }
         glob.replace(glob.length() - 1, glob.length(), "}");
+                        } else {
+                            Logger.getLogger(SerialPortManagerImp.class.getName())
+                                    .log(Level.WARNING, 
+                                            "Could not acquire lock on portPrefixes when requested to return prfix list.");
+                            glob.append("}"); // Going to search an empty list
+                        }
+                } catch (InterruptedException ex){
+                    Logger.getLogger(SerialPortManagerImp.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    prefixesLock.unlock();
+                }
+                break;
+            case FIXED:
+                glob.append("ttyS*}");
+                break;
+            case USB:
+                glob.append("ttyUSB*}");
+                break;
+        }
         try {
             DirectoryStream<Path> stream = 
                     Files.newDirectoryStream(FileSystems.getDefault().getPath(mountPoint),
@@ -121,22 +149,49 @@ public class SerialPortManagerImp implements SerialPortManager {
         return ports;
     }
 
-    public List<String> listSerialPorts(PortTypes portType) {
-        // TODO: If portType is null the return an empty list.
-        // if (portType == null) return new ArrayList();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    /**
+     * Returns an unmodifiable list of port prefixes currently in use. Any
+     * attempt to modify the list will result in an UnsupportedOperationException.
+     * @return an unmodifiable list of port prefixes in current use.
+     */
     public List<String> getPortPrefixes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Collections.unmodifiableList(portPrefixes);
     }
 
+    /**
+     * Sets the current list of serial port prefixes. This method it thread safe.
+     * @param prefixes List of type String of serial port prefixes to use.
+     */
     public void setPortPrefixes(List<String> prefixes) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            if (prefixesLock.tryLock(3, TimeUnit.SECONDS)){
+                portPrefixes = Collections.synchronizedList(new ArrayList<String>(prefixes));
+            } else {
+                Logger.getLogger(SerialPortManagerImp.class.getName())
+                    .log(Level.WARNING, 
+                            "Could not acquire lock on portPrefixes when attempting to set port prefixes");
+    }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SerialPortManagerImp.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            prefixesLock.unlock();
+        }
     }
 
-    public void appendPortPrefixes(List<String> prefixes) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    @Override
+    public void appendPortPrefixes(final List<String> prefixes) {
+        try {
+            if (prefixesLock.tryLock(3, TimeUnit.SECONDS)){
+                portPrefixes.addAll(new ArrayList<String>(prefixes));
+    }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SerialPortManagerImp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedOperationException | ClassCastException | NullPointerException |
+                IllegalArgumentException | IllegalStateException ex) {
+
+        }finally {
+            prefixesLock.unlock();
+        }
     }
 
     /**
