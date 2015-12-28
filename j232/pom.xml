@@ -4,9 +4,16 @@
 
     <groupId>com.javatechnics.rs232</groupId>
     <artifactId>j232</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
     <packaging>nar</packaging>
-
+    <!-- version taken from parent. When Parent updated, run :
+        mvn versions:set -DgenerateBackupPoms=false
+         to update child modules.
+    -->
+    <parent>
+        <groupId>com.javatechnics</groupId>
+        <artifactId>j232</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
     <name>j232 OSGi Bundle</name>
 
     <properties>

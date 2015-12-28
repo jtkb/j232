@@ -3,14 +3,39 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.javatechnics</groupId>
     <artifactId>j232</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <!-- Version will be used by child projects. When Parent updated, run :
+        mvn versions:set -DgenerateBackupPoms=false
+         to update child modules.
+    -->
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>j232</module>
-    <module>j232-karaf-command</module>
-    <module>SerialPortManager</module>
-  </modules>
+        <module>j232-karaf-command</module>
+        <module>SerialPortManager</module>
+    </modules>
+    <distributionManagement>
+        <!-- Repository refers to private repo and the properties are specified
+              in user's settings.xml.
+              In case there is peer not authenticated the following switches
+              must be passed on the command line :
+                  -Dmaven.wagon.http.ssl.insecure=true 
+                  -Dmaven.wagon.http.ssl.allowall=true
+        -->
+        <repository>
+            <id>${repo.name}</id>
+            <url>${repo.url}</url>
+        </repository>
+    </distributionManagement>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>${repo.name}</id>
+            <url>${repo.url}</url>
+        </pluginRepository>
+    </pluginRepositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
 </project>
